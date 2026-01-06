@@ -20,6 +20,10 @@ This is a template repository for the Claude Code workshop. It contains the scaf
    - `/core_piv_loop:plan-feature` — Create an implementation plan for a feature
    - `/core_piv_loop:execute` — Execute the plan step-by-step
 
+   These commands follow the **PIV Loop** (Prime → Implement → Validate) workflow:
+
+   ![PIV Loop Diagram](PIVLoopDiagram.png)
+
 ## Claude Commands
 
 Slash commands for Claude Code to assist with development workflows.
