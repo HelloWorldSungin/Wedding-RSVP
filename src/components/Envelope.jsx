@@ -1,16 +1,39 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ANIMATION_STATES } from '../hooks/useAnimationState';
-import EnvelopeFlap from './EnvelopeFlap';
+
+// Import envelope images
+import envelopeClosed from '../../picture/Envelope-Closed.png';
+import envelopeHalfway from '../../picture/Envelope-Half-way-opened.png';
+import envelopeOpened from '../../picture/Envelope-Opened.png';
 
 /**
- * Envelope component with opening animation
- * Clean, realistic envelope design:
- * - Solid rectangular body
- * - V-shaped top flap (only visible fold)
- * - Beige inner lining revealed when flap opens
+ * Envelope component with frame-based opening animation
+ * Uses 3 pre-rendered images: Closed → Half-way → Opened
  */
 function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
   const isClosed = state === ANIMATION_STATES.CLOSED;
+  const [currentFrame, setCurrentFrame] = useState(0); // 0: closed, 1: halfway, 2: opened
+
+  // Handle frame animation when state changes to OPENING
+  useEffect(() => {
+    if (state === ANIMATION_STATES.OPENING) {
+      // Frame 1: halfway (after 100ms)
+      const timer1 = setTimeout(() => setCurrentFrame(1), 100);
+      // Frame 2: opened (after 400ms)
+      const timer2 = setTimeout(() => {
+        setCurrentFrame(2);
+        onFlapOpened();
+      }, 400);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    } else if (state === ANIMATION_STATES.CLOSED) {
+      setCurrentFrame(0);
+    }
+  }, [state, onFlapOpened]);
 
   const getEnvelopeAnimationState = () => {
     if (state === ANIMATION_STATES.CLOSED || state === ANIMATION_STATES.OPENING) {
@@ -19,55 +42,29 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
     return 'open';
   };
 
+  const frames = [envelopeClosed, envelopeHalfway, envelopeOpened];
+
   return (
     <motion.div
-      className="relative w-full aspect-[5/4] cursor-pointer"
+      className="relative w-full aspect-[3/2] cursor-pointer"
       onClick={isClosed ? onClick : undefined}
       whileHover={isClosed ? { scale: 1.02 } : {}}
       whileTap={isClosed ? { scale: 0.98 } : {}}
-      style={{ perspective: '1000px' }}
       variants={envelopeVariants}
       animate={getEnvelopeAnimationState()}
     >
-      {/* Inner Lining - visible when flap opens */}
-      <div
-        className="absolute inset-0 rounded-sm"
-        style={{
-          backgroundColor: 'var(--color-envelope-lining)',
-        }}
-      />
-
-      {/* Main envelope body - clean rectangle */}
-      <div
-        className="absolute inset-0 rounded-sm overflow-hidden"
-        style={{
-          backgroundColor: '#FAFAFA',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-        }}
-      >
-        {/* Subtle gradient for depth */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #F8F8F8 50%, #F5F5F5 100%)',
-          }}
+      {/* Stack all frames, only show current one */}
+      {frames.map((frame, index) => (
+        <motion.img
+          key={index}
+          src={frame}
+          alt={`Envelope frame ${index}`}
+          className="absolute inset-0 w-full h-full object-contain"
+          initial={{ opacity: index === 0 ? 1 : 0 }}
+          animate={{ opacity: index === currentFrame ? 1 : 0 }}
+          transition={{ duration: 0.15 }}
         />
-
-        {/* Subtle shadow line where flap meets body */}
-        <div
-          className="absolute top-0 left-0 right-0"
-          style={{
-            height: '55%',
-            background: 'linear-gradient(180deg, transparent 90%, rgba(0,0,0,0.03) 100%)',
-          }}
-        />
-      </div>
-
-      {/* V-flap (top) - the only visible fold */}
-      <EnvelopeFlap
-        state={state}
-        onAnimationComplete={onFlapOpened}
-      />
+      ))}
     </motion.div>
   );
 }
