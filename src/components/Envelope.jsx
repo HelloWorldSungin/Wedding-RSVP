@@ -21,14 +21,14 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
       // Frame 1: halfway (after 100ms)
       const timer1 = setTimeout(() => setCurrentFrame(1), 100);
       // Frame 2: opened (after 400ms)
-      const timer2 = setTimeout(() => {
-        setCurrentFrame(2);
-        onFlapOpened();
-      }, 400);
+      const timer2 = setTimeout(() => setCurrentFrame(2), 400);
+      // Delay card rising by 1 second after envelope is fully open
+      const timer3 = setTimeout(() => onFlapOpened(), 1400);
 
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
+        clearTimeout(timer3);
       };
     } else if (state === ANIMATION_STATES.CLOSED) {
       setCurrentFrame(0);

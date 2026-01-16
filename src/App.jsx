@@ -28,8 +28,12 @@ function App() {
     },
   };
 
-  // Check if card should be visible
-  const showCard = state !== ANIMATION_STATES.CLOSED;
+  // Check if card should be visible - only after envelope is fully open
+  const showCard = [
+    ANIMATION_STATES.CARD_RISING,
+    ANIMATION_STATES.CARD_ROTATING,
+    ANIMATION_STATES.OPEN,
+  ].includes(state);
 
   return (
     <main className="min-h-screen bg-cream flex flex-col items-center p-4 md:p-8">
