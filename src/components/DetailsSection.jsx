@@ -34,7 +34,7 @@ function DetailsSection() {
 
   return (
     <motion.section
-      className="w-full max-w-4xl mx-auto mt-16 md:mt-20 px-6 md:px-8 text-center"
+      className="w-full max-w-4xl mx-auto mt-4 md:mt-6 px-6 md:px-8 text-center"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

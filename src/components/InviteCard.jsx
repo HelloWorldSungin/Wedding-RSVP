@@ -7,19 +7,18 @@ import WeddingDetails from './WeddingDetails';
 /**
  * Main invitation card component
  * Rises from envelope and rotates into view
- * Responsive: vertical layout on mobile, horizontal on desktop
- * Card stays above envelope (higher z-index) throughout animation
+ * Same horizontal layout on both mobile and desktop, scaled to fit viewport
  */
 function InviteCard({ state, onCardRisen, onCardRotated }) {
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
   );
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const shouldRise = [
@@ -70,42 +69,58 @@ function InviteCard({ state, onCardRisen, onCardRotated }) {
     return 'open';
   };
 
-  // Mobile: constrained width, Desktop: constrained width with auto height
-  const sizeClasses = isMobile
-    ? 'w-[92vw] max-w-[420px]'
-    : 'w-full max-w-lg';
+  // Scale factor based on screen width
+  // Mobile: larger scale to fill ~50% of viewport height
+  const getCardScale = () => {
+    if (windowWidth < 480) return 0.75;  // Small phones - larger to fill viewport
+    if (windowWidth < 768) return 0.8;   // Larger phones
+    return 0.7;  // Desktop/tablet
+  };
+
+  const cardScale = getCardScale();
 
   return (
-    <motion.div
-      className={`rounded-xl overflow-hidden ${sizeClasses}`}
+    <div
+      className="flex justify-center"
       style={{
-        boxShadow: 'var(--shadow-card)',
-        backgroundColor: '#F0EDE8',
-      }}
-      variants={cardVariants}
-      initial="hidden"
-      animate={getAnimationState()}
-      onAnimationComplete={() => {
-        if (state === ANIMATION_STATES.CARD_RISING) {
-          onCardRisen();
-        } else if (state === ANIMATION_STATES.CARD_ROTATING) {
-          onCardRotated();
-        }
+        // Scale the container to match the visual size of the scaled card
+        transform: `scale(${cardScale})`,
+        transformOrigin: 'top center',
+        // Negative margin to compensate for the scale shrinking the space
+        marginBottom: `-${(1 - cardScale) * 100}%`,
       }}
     >
-      {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
-      <div className={`${isMobile ? 'flex flex-col' : 'flex flex-row'}`}>
-        {/* Photos section */}
-        <div className={`p-3 md:p-4 ${isMobile ? 'h-[45vh]' : 'w-[65%]'}`}>
-          <PhotoStack />
-        </div>
+      <motion.div
+        className="rounded-2xl overflow-hidden w-full max-w-xl"
+        style={{
+          boxShadow: 'var(--shadow-card)',
+          backgroundColor: '#F0EDE8',
+        }}
+        variants={cardVariants}
+        initial="hidden"
+        animate={getAnimationState()}
+        onAnimationComplete={() => {
+          if (state === ANIMATION_STATES.CARD_RISING) {
+            onCardRisen();
+          } else if (state === ANIMATION_STATES.CARD_ROTATING) {
+            onCardRotated();
+          }
+        }}
+      >
+        {/* Same horizontal layout for both mobile and desktop */}
+        <div className="flex flex-row">
+          {/* Photos section - bigger padding for border effect */}
+          <div className="p-5 w-[65%]">
+            <PhotoStack />
+          </div>
 
-        {/* Details section */}
-        <div className={`p-4 md:p-3 ${isMobile ? '' : 'w-[35%] py-6'}`}>
-          <WeddingDetails />
+          {/* Details section */}
+          <div className="p-5 w-[35%] py-8">
+            <WeddingDetails />
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
