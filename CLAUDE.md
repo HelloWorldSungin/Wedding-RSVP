@@ -1,103 +1,116 @@
-# [Project Name]
+# Wedding E-Invite
 
-<!-- Brief one-line description of what this project does -->
+Animated electronic wedding invitation with envelope opening animation for Sungin & Diane's wedding on September 19, 2026 at Hart & Main, Santa Clarita CA.
 
 ## Tech Stack
 
-<!-- List the main technologies used in this project -->
-
-- **Backend**:
-- **Frontend**:
-- **Testing**:
-- **Other**:
+- **Frontend**: React 18, Vite 5, Tailwind CSS 3, Framer Motion 11
+- **Fonts**: Google Fonts (Great Vibes, Playfair Display, Lato)
+- **Deployment**: Vercel (static site)
+- **Backend**: N/A (static frontend only)
+- **Database**: N/A (no data persistence)
 
 ## Project Structure
 
-<!-- Document the folder structure of your project -->
-
 ```
-project-name/
-├── backend/
-│   └── ...
-├── frontend/
-│   └── ...
-├── tests/
-│   └── ...
+wedding-invite/
+├── src/
+│   ├── components/
+│   │   ├── Envelope.jsx         # Envelope with open/close animation
+│   │   ├── EnvelopeFlap.jsx     # Top flap with 3D rotation
+│   │   ├── InviteCard.jsx       # Main card container
+│   │   ├── PhotoStack.jsx       # 3 photos vertical layout
+│   │   ├── WeddingDetails.jsx   # Names, date, venue text
+│   │   ├── ActionButtons.jsx    # 4 link buttons (RSVP, Website, Registry, Directions)
+│   │   └── ReplayButton.jsx     # Reset animation button
+│   ├── assets/
+│   │   └── photos/              # Engagement photos
+│   ├── hooks/
+│   │   └── useAnimationState.js # Animation state machine
+│   ├── App.jsx                  # Main app component
+│   ├── main.jsx                 # React entry point
+│   └── index.css                # Tailwind + fonts
+├── public/
+│   ├── favicon.ico
+│   └── og-image.jpg             # Social sharing preview
+├── index.html
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+├── .env                         # Link URLs (RSVP, registry, etc.)
 └── .claude/
-    ├── PRD.md                # Product requirements
-    └── reference/            # Best practices docs
+    ├── PRD.md                   # Product requirements
+    └── reference/               # Implementation guides
 ```
 
 ## Commands
 
-<!-- List the essential commands for running, building, and testing the project -->
-
 ```bash
 # Install dependencies
-
+npm install
 
 # Run development server
-
-
-# Run tests
-
+npm run dev
 
 # Build for production
+npm run build
 
+# Preview production build
+npm run preview
 ```
 
 ## MCP Servers
 
-<!-- List any MCP servers that should be used with this project -->
-
-**Playwright MCP** is available for browser automation and E2E testing:
-```bash
-claude mcp add playwright npx @playwright/mcp@latest
-```
+**Context7 MCP** for up-to-date library documentation:
+- Use `resolve-library-id` then `query-docs` for Framer Motion, Tailwind, React patterns
 
 ## Reference Documentation
 
-<!-- Point to reference docs that should be read when working on specific areas -->
-
 | Document | When to Read |
 |----------|--------------|
-| `.claude/PRD.md` | Understanding requirements, features, API spec |
-| `.claude/reference/...` | ... |
+| `.claude/PRD.md` | Understanding requirements, features, animation specs, user stories |
+| `.claude/reference/implementation-plan.md` | Phase-by-phase implementation guidance |
 
 ## Code Conventions
 
-<!-- Document the coding standards and patterns used in this project -->
+### React Components
+- Functional components with hooks only
+- Small, focused components with single responsibility
+- Props for customization, avoid prop drilling
+- Use `import.meta.env.VITE_*` for environment variables
 
-### Backend
--
+### Tailwind CSS
+- Mobile-first responsive design (sm, md, lg breakpoints)
+- Custom theme colors: Cream (#FAF9F6), Beige (#F5F5DC), Charcoal (#36454F)
+- Utility-first approach, avoid custom CSS when possible
 
-### Frontend
--
+### Framer Motion
+- Use variants for animation definitions
+- Animation state machine: `idle -> opening -> revealing -> complete`
+- Custom easing for premium feel: `[0.16, 1, 0.3, 1]`
+- Target 60fps animations using CSS transforms (GPU accelerated)
 
-### API Design
--
+### Links & Security
+- External links use `target="_blank"` with `rel="noopener noreferrer"`
+- All configurable URLs in `.env` file with `VITE_` prefix
 
-## Logging
+## Environment Variables
 
-<!-- Describe the logging approach used in this project -->
-
-## Database
-
-<!-- Document the database setup, schema, and any important configuration -->
-
-## Testing Strategy
-
-<!-- Describe how testing is organized in this project -->
-
-### Testing Pyramid
-- **Unit tests**:
-- **Integration tests**:
-- **E2E tests**:
-
-### Test Organization
+```bash
+# .env
+VITE_RSVP_URL=https://forms.google.com/your-form-id
+VITE_WEDDING_WEBSITE_URL=https://your-wedding-website.com
+VITE_REGISTRY_URL=https://your-registry-url.com
+VITE_DIRECTIONS_URL=https://maps.google.com/?q=Hart+and+Main+24217+Main+St+Santa+Clarita+CA
 ```
-tests/
-├── unit/
-├── integration/
-└── e2e/
-```
+
+## Performance Targets
+
+| Metric | Target |
+|--------|--------|
+| Animation FPS | 60fps |
+| Page Load (3G) | < 3 seconds |
+| Lighthouse Performance | > 90 |
+| Lighthouse Accessibility | > 90 |
+| Image Size | < 100KB each |
