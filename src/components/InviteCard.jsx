@@ -70,10 +70,10 @@ function InviteCard({ state, onCardRisen, onCardRotated }) {
     return 'open';
   };
 
-  // Mobile: constrained width, Desktop: height-based sizing
+  // Mobile: constrained width, Desktop: constrained width with auto height
   const sizeClasses = isMobile
     ? 'w-[92vw] max-w-[420px]'
-    : 'w-full max-w-lg h-[85vh]';
+    : 'w-full max-w-lg';
 
   return (
     <motion.div
@@ -94,14 +94,14 @@ function InviteCard({ state, onCardRisen, onCardRotated }) {
       }}
     >
       {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
-      <div className={`h-full ${isMobile ? 'flex flex-col' : 'flex flex-row'}`}>
+      <div className={`${isMobile ? 'flex flex-col' : 'flex flex-row'}`}>
         {/* Photos section */}
-        <div className={`p-3 md:p-4 ${isMobile ? 'h-[45vh]' : 'h-full w-[65%]'}`}>
+        <div className={`p-3 md:p-4 ${isMobile ? 'h-[45vh]' : 'w-[65%]'}`}>
           <PhotoStack />
         </div>
 
         {/* Details section */}
-        <div className={`p-4 md:p-3 ${isMobile ? '' : 'h-full w-[35%]'}`}>
+        <div className={`p-4 md:p-3 ${isMobile ? '' : 'w-[35%] py-6'}`}>
           <WeddingDetails />
         </div>
       </div>

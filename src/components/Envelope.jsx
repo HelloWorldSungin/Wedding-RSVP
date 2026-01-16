@@ -22,8 +22,8 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
       const timer1 = setTimeout(() => setCurrentFrame(1), 100);
       // Frame 2: opened (after 400ms)
       const timer2 = setTimeout(() => setCurrentFrame(2), 400);
-      // Delay card rising by 1 second after envelope is fully open
-      const timer3 = setTimeout(() => onFlapOpened(), 1400);
+      // Delay card rising by 0.5 second after envelope is fully open
+      const timer3 = setTimeout(() => onFlapOpened(), 900);
 
       return () => {
         clearTimeout(timer1);
