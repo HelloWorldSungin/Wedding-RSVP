@@ -40,41 +40,54 @@ function App() {
       {/* Spacer for centering when closed */}
       {isClosed && <div className="flex-1" />}
 
-      {/* Animation Container - holds both envelope and card */}
-      <div
-        className="relative w-full max-w-lg perspective-1000"
-        style={{
-          minHeight: isClosed ? '50vh' : '95vh',
-          overflow: 'visible',
-        }}
-      >
-        {/* Envelope - always visible, behind card */}
+      {/* Animation Container - holds envelope and animating card */}
+      {!isOpen && (
         <div
-          className="absolute top-0 left-0 right-0"
-          style={{ zIndex: 1 }}
+          className="relative w-full max-w-lg perspective-1000"
+          style={{
+            minHeight: '50vh',
+            overflow: 'visible',
+          }}
         >
-          <Envelope
-            state={state}
-            onClick={openEnvelope}
-            onFlapOpened={onFlapOpened}
-            envelopeVariants={envelopeVariants}
-          />
-        </div>
-
-        {/* Invite Card - rises from envelope, overlays it */}
-        {showCard && (
+          {/* Envelope - visible when closed/animating */}
           <div
-            className="absolute top-0 left-0 right-0 flex justify-center"
-            style={{ zIndex: 10 }}
+            className="absolute top-0 left-0 right-0"
+            style={{ zIndex: 1 }}
           >
-            <InviteCard
+            <Envelope
               state={state}
-              onCardRisen={onCardRisen}
-              onCardRotated={onCardRotated}
+              onClick={openEnvelope}
+              onFlapOpened={onFlapOpened}
+              envelopeVariants={envelopeVariants}
             />
           </div>
-        )}
-      </div>
+
+          {/* Invite Card - animating from envelope */}
+          {showCard && (
+            <div
+              className="absolute top-0 left-0 right-0 flex justify-center"
+              style={{ zIndex: 10 }}
+            >
+              <InviteCard
+                state={state}
+                onCardRisen={onCardRisen}
+                onCardRotated={onCardRotated}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Card in normal flow when animation is complete */}
+      {isOpen && (
+        <div className="w-full max-w-lg flex justify-center">
+          <InviteCard
+            state={state}
+            onCardRisen={onCardRisen}
+            onCardRotated={onCardRotated}
+          />
+        </div>
+      )}
 
       {/* Tap instruction - shown when envelope is closed */}
       {isClosed && (
