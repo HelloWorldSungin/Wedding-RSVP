@@ -4,10 +4,10 @@ import EnvelopeFlap from './EnvelopeFlap';
 
 /**
  * Envelope component with opening animation
- * Realistic envelope matching the Paperless Post reference (Image #8)
- * - V-shaped top flap dominates the upper portion
- * - Side flaps visible in lower portion
- * - Small bottom flap
+ * Clean, realistic envelope design:
+ * - Solid rectangular body
+ * - V-shaped top flap (only visible fold)
+ * - Beige inner lining revealed when flap opens
  */
 function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
   const isClosed = state === ANIMATION_STATES.CLOSED;
@@ -37,48 +37,33 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
         }}
       />
 
-      {/* Main envelope body */}
+      {/* Main envelope body - clean rectangle */}
       <div
-        className="absolute inset-0 rounded-sm"
+        className="absolute inset-0 rounded-sm overflow-hidden"
         style={{
-          backgroundColor: '#F9F9F9',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          backgroundColor: '#FAFAFA',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
         }}
-      />
+      >
+        {/* Subtle gradient for depth */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #F8F8F8 50%, #F5F5F5 100%)',
+          }}
+        />
 
-      {/* Left side flap - starts from bottom-left, points to center */}
-      <div
-        className="absolute left-0 bottom-0"
-        style={{
-          width: '55%',
-          height: '75%',
-          clipPath: 'polygon(0 0, 0 100%, 100% 100%, 100% 33%)',
-          background: 'linear-gradient(135deg, #F0F0F0 0%, #F6F6F6 50%, #FAFAFA 100%)',
-        }}
-      />
+        {/* Subtle shadow line where flap meets body */}
+        <div
+          className="absolute top-0 left-0 right-0"
+          style={{
+            height: '55%',
+            background: 'linear-gradient(180deg, transparent 90%, rgba(0,0,0,0.03) 100%)',
+          }}
+        />
+      </div>
 
-      {/* Right side flap - starts from bottom-right, points to center */}
-      <div
-        className="absolute right-0 bottom-0"
-        style={{
-          width: '55%',
-          height: '75%',
-          clipPath: 'polygon(100% 0, 100% 100%, 0 100%, 0 33%)',
-          background: 'linear-gradient(-135deg, #F0F0F0 0%, #F6F6F6 50%, #FAFAFA 100%)',
-        }}
-      />
-
-      {/* Bottom flap - subtle triangle pointing up */}
-      <div
-        className="absolute bottom-0 left-0 right-0"
-        style={{
-          height: '28%',
-          clipPath: 'polygon(0 100%, 50% 20%, 100% 100%)',
-          background: '#F5F5F5',
-        }}
-      />
-
-      {/* V-flap (top) - rendered last to be on top */}
+      {/* V-flap (top) - the only visible fold */}
       <EnvelopeFlap
         state={state}
         onAnimationComplete={onFlapOpened}
