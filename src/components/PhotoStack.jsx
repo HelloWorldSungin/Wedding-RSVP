@@ -1,15 +1,16 @@
 import { motion } from 'framer-motion';
+import photo1 from '../assets/photos/e-invite-pic1.JPG';
+import photo2 from '../assets/photos/e-invite-pic2.JPG';
+import photo3 from '../assets/photos/e-invite-pic3.JPG';
 
 /**
  * Stack of 3 engagement photos displayed vertically
- * Photos will be replaced with actual engagement photos
  */
 function PhotoStack() {
-  // Placeholder photos - replace with actual engagement photos
   const photos = [
-    { id: 1, alt: 'Engagement photo 1' },
-    { id: 2, alt: 'Engagement photo 2' },
-    { id: 3, alt: 'Engagement photo 3' },
+    { id: 1, src: photo1, alt: 'Sungin & Diane engagement photo 1' },
+    { id: 2, src: photo2, alt: 'Sungin & Diane engagement photo 2' },
+    { id: 3, src: photo3, alt: 'Sungin & Diane engagement photo 3' },
   ];
 
   const containerVariants = {
@@ -48,14 +49,11 @@ function PhotoStack() {
           className="flex-1 bg-beige rounded-lg overflow-hidden shadow-sm"
           variants={photoVariants}
         >
-          {/* Placeholder - replace src with actual photo imports */}
-          <div
-            className="w-full h-full bg-gradient-to-br from-gold/10 to-gold/5 flex items-center justify-center"
-          >
-            <span className="text-charcoal/30 font-serif text-sm">
-              Photo {photo.id}
-            </span>
-          </div>
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            className="w-full h-full object-cover"
+          />
         </motion.div>
       ))}
     </motion.div>

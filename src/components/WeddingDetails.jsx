@@ -2,7 +2,9 @@ import { motion } from 'framer-motion';
 
 /**
  * Wedding details text section
- * Displays names, date, time, and venue
+ * Responsive design:
+ * - Mobile: Horizontal "SAVE the DATE", centered layout
+ * - Desktop: Vertical column with rotated letters (Paperless Post style)
  */
 function WeddingDetails() {
   const containerVariants = {
@@ -28,62 +30,87 @@ function WeddingDetails() {
     },
   };
 
+  // Rotated letter component for desktop (90 degrees clockwise)
+  const RotatedLetter = ({ letter }) => (
+    <span
+      className="font-serif text-charcoal text-5xl md:text-6xl lg:text-7xl tracking-wider block"
+      style={{ transform: 'rotate(90deg)' }}
+    >
+      {letter}
+    </span>
+  );
+
   return (
     <motion.div
-      className="text-center md:text-left"
+      className="h-full flex flex-col justify-center md:justify-between py-2 gap-4 md:gap-0"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Save the Date */}
-      <motion.p
-        className="font-serif text-charcoal/60 text-xs tracking-[0.3em] uppercase mb-2"
+      {/* SAVE the DATE - Horizontal on mobile, Vertical on desktop */}
+      <motion.div
+        className="flex flex-col items-center md:items-end gap-0"
         variants={itemVariants}
       >
-        Save the Date
-      </motion.p>
+        {/* Mobile: Horizontal layout */}
+        <div className="md:hidden text-center">
+          <p className="font-serif text-charcoal text-2xl tracking-[0.3em] font-light">
+            SAVE
+          </p>
+          <p className="font-script text-charcoal/70 text-2xl -mt-1">
+            the
+          </p>
+          <p className="font-serif text-charcoal text-2xl tracking-[0.3em] font-light">
+            DATE
+          </p>
+        </div>
 
-      {/* Names */}
-      <motion.h1
-        className="font-script text-4xl md:text-5xl lg:text-6xl text-charcoal mb-4"
-        variants={itemVariants}
-      >
-        Sungin & Diane
-      </motion.h1>
-
-      {/* Date */}
-      <motion.p
-        className="font-serif text-lg md:text-xl text-charcoal/80 mb-1"
-        variants={itemVariants}
-      >
-        Saturday, September 19, 2026
-      </motion.p>
-
-      {/* Time */}
-      <motion.p
-        className="font-sans text-sm text-charcoal/60 mb-4"
-        variants={itemVariants}
-      >
-        4:00 PM PDT
-      </motion.p>
-
-      {/* Venue */}
-      <motion.div variants={itemVariants}>
-        <p className="font-serif text-base md:text-lg text-charcoal/80">
-          Hart & Main
-        </p>
-        <p className="font-sans text-sm text-charcoal/50">
-          24217 Main St, Santa Clarita, CA 91321
-        </p>
+        {/* Desktop: Vertical rotated layout */}
+        <div className="hidden md:flex md:flex-col md:items-end">
+          <RotatedLetter letter="S" />
+          <RotatedLetter letter="A" />
+          <RotatedLetter letter="V" />
+          <RotatedLetter letter="E" />
+          <span className="font-script text-charcoal/70 text-3xl md:text-4xl lg:text-5xl my-2">
+            the
+          </span>
+          <RotatedLetter letter="D" />
+          <RotatedLetter letter="A" />
+          <RotatedLetter letter="T" />
+          <RotatedLetter letter="E" />
+        </div>
       </motion.div>
 
-      {/* Invitation note */}
-      <motion.p
-        className="font-serif italic text-sm text-charcoal/40 mt-6"
+      {/* Names - tilted on desktop, straight on mobile */}
+      <motion.div
+        className="flex justify-center"
         variants={itemVariants}
       >
-        Invitation to follow
-      </motion.p>
+        <div className="md:rotate-[-20deg]">
+          <p className="font-script text-3xl md:text-4xl lg:text-5xl text-charcoal leading-tight text-center">
+            Sungin
+          </p>
+          <p className="font-script text-3xl md:text-4xl lg:text-5xl text-charcoal leading-tight text-center">
+            & Diane
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Bottom Section - Date, Venue */}
+      <motion.div
+        className="text-center md:text-right space-y-1"
+        variants={itemVariants}
+      >
+        <p className="font-sans text-sm md:text-base text-charcoal tracking-[0.2em]">
+          09.19.26
+        </p>
+        <p className="font-sans text-sm md:text-base text-charcoal font-medium tracking-[0.15em]">
+          HART&MAIN
+        </p>
+        <p className="font-serif italic text-xs md:text-sm text-charcoal/50 pt-1">
+          Invitation to follow
+        </p>
+      </motion.div>
     </motion.div>
   );
 }

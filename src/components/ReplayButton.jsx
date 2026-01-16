@@ -8,7 +8,7 @@ function ReplayButton({ onClick }) {
   return (
     <motion.button
       onClick={onClick}
-      className="mt-8 flex items-center gap-2 px-4 py-2 bg-transparent border border-charcoal/20 text-charcoal/60 rounded-full font-sans text-sm hover:bg-charcoal/5 hover:border-charcoal/30 transition-colors"
+      className="flex items-center gap-2 px-4 py-2 bg-transparent border border-charcoal/20 text-charcoal/60 rounded-full font-sans text-sm hover:bg-charcoal/5 hover:border-charcoal/30 transition-colors"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.4 }}
