@@ -41,19 +41,11 @@ function DetailsSection() {
     >
       {/* Headline - Large serif font */}
       <motion.h2
-        className="font-serif text-3xl md:text-4xl lg:text-5xl text-charcoal mb-6 md:mb-8"
+        className="font-serif text-3xl md:text-4xl lg:text-5xl text-charcoal mb-12 md:mb-16"
         variants={itemVariants}
       >
         Sungin&Diane are getting married!
       </motion.h2>
-
-      {/* Subtitle */}
-      <motion.p
-        className="font-sans text-base md:text-lg text-charcoal/60 mb-12 md:mb-16"
-        variants={itemVariants}
-      >
-        Website and details will be sent at a later time. Thank you!
-      </motion.p>
 
       {/* Info Grid - Desktop: 3 cols, Mobile: stacked */}
       <motion.div
