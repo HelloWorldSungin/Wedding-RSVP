@@ -1,6 +1,8 @@
 # React Frontend Best Practices Reference
 
-A concise reference guide for building modern React applications with Vite and Tailwind CSS.
+A concise reference guide for building modern React applications with Vite, Tailwind CSS, and Framer Motion.
+
+> **Updated via Context7 MCP** - Latest patterns from official documentation (January 2025)
 
 ---
 
@@ -9,84 +11,47 @@ A concise reference guide for building modern React applications with Vite and T
 1. [Project Structure](#1-project-structure)
 2. [Component Design](#2-component-design)
 3. [State Management](#3-state-management)
-4. [Data Fetching](#4-data-fetching)
-5. [Forms & Validation](#5-forms--validation)
-6. [Styling with Tailwind](#6-styling-with-tailwind)
+4. [Framer Motion Animations](#4-framer-motion-animations)
+5. [Styling with Tailwind](#5-styling-with-tailwind)
+6. [Vite Configuration](#6-vite-configuration)
 7. [Performance](#7-performance)
 8. [Hooks Patterns](#8-hooks-patterns)
-9. [Routing](#9-routing)
-10. [Error Handling](#10-error-handling)
-11. [Testing](#11-testing)
-12. [Accessibility](#12-accessibility)
-13. [Anti-Patterns](#13-anti-patterns)
+9. [Accessibility](#9-accessibility)
+10. [Anti-Patterns](#10-anti-patterns)
 
 ---
 
 ## 1. Project Structure
 
-### Feature-Based Structure (Recommended)
+### Component-Based Structure (For Single-Page Apps)
 
 ```
 src/
-├── features/
-│   ├── habits/
-│   │   ├── components/
-│   │   │   ├── HabitCard.jsx
-│   │   │   ├── HabitForm.jsx
-│   │   │   └── HabitList.jsx
-│   │   ├── hooks/
-│   │   │   └── useHabits.js
-│   │   ├── api/
-│   │   │   └── habits.js
-│   │   └── index.js           # Public exports
-│   └── calendar/
-│       ├── components/
-│       ├── hooks/
-│       └── index.js
-├── components/                 # Shared/common components
-│   ├── ui/
-│   │   ├── Button.jsx
-│   │   ├── Card.jsx
-│   │   └── Modal.jsx
-│   └── layout/
-│       ├── Header.jsx
-│       └── Layout.jsx
-├── hooks/                      # Shared hooks
-│   └── useLocalStorage.js
-├── lib/                        # Utilities
-│   ├── api.js                  # API client
-│   └── utils.js
-├── pages/                      # Route pages
-│   ├── Dashboard.jsx
-│   └── HabitDetail.jsx
-├── App.jsx
-├── main.jsx
-└── index.css
+├── components/
+│   ├── Envelope.jsx           # Envelope with open animation
+│   ├── EnvelopeFlap.jsx       # Top flap with 3D rotation
+│   ├── InviteCard.jsx         # Main card container
+│   ├── PhotoStack.jsx         # Photos vertical layout
+│   ├── WeddingDetails.jsx     # Names, date, venue text
+│   ├── ActionButtons.jsx      # Link buttons
+│   └── ReplayButton.jsx       # Reset animation button
+├── hooks/
+│   └── useAnimationState.js   # Animation state machine
+├── assets/
+│   └── photos/                # Images
+├── App.jsx                    # Main app component
+├── main.jsx                   # React entry point
+└── index.css                  # Tailwind + fonts
 ```
 
 ### File Naming Conventions
 
 | Type | Convention | Example |
 |------|------------|---------|
-| Components | PascalCase | `HabitCard.jsx` |
-| Hooks | camelCase, `use` prefix | `useHabits.js` |
+| Components | PascalCase | `InviteCard.jsx` |
+| Hooks | camelCase, `use` prefix | `useAnimationState.js` |
 | Utilities | camelCase | `formatDate.js` |
-| Constants | SCREAMING_SNAKE_CASE | `API_BASE_URL` |
-| CSS/styles | kebab-case | `habit-card.css` |
-
-### Barrel Exports
-
-```javascript
-// features/habits/index.js
-export { HabitCard } from './components/HabitCard';
-export { HabitForm } from './components/HabitForm';
-export { useHabits } from './hooks/useHabits';
-
-// Usage elsewhere
-import { HabitCard, useHabits } from '@/features/habits';
-```
-
-**Note**: Barrel exports can hurt tree-shaking and build times in large projects. Use judiciously.
+| Constants | SCREAMING_SNAKE_CASE | `ANIMATION_DURATION` |
 
 ---
 
@@ -95,24 +60,35 @@ import { HabitCard, useHabits } from '@/features/habits';
 ### Functional Components
 
 ```jsx
-// Simple component
-function HabitCard({ habit, onComplete }) {
+// Simple component with props
+function PhotoStack({ photos, className = '' }) {
   return (
-    <div className="p-4 border rounded">
-      <h3>{habit.name}</h3>
-      <button onClick={() => onComplete(habit.id)}>Complete</button>
+    <div className={`flex flex-col gap-4 ${className}`}>
+      {photos.map((photo, index) => (
+        <img
+          key={index}
+          src={photo}
+          alt={`Photo ${index + 1}`}
+          className="rounded-lg shadow-md object-cover"
+        />
+      ))}
     </div>
   );
 }
 
 // With default props
-function HabitCard({ habit, onComplete, showStreak = true }) {
-  // ...
-}
-
-// Destructure in parameters
-function HabitCard({ habit: { id, name, streak }, onComplete }) {
-  // ...
+function ActionButton({ href, children, icon, variant = 'primary' }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`btn btn-${variant}`}
+    >
+      {icon && <span className="mr-2">{icon}</span>}
+      {children}
+    </a>
+  );
 }
 ```
 
@@ -121,1107 +97,853 @@ function HabitCard({ habit: { id, name, streak }, onComplete }) {
 ```jsx
 // Compound components pattern
 function Card({ children, className }) {
-  return <div className={`border rounded ${className}`}>{children}</div>;
+  return (
+    <div className={`bg-cream rounded-lg shadow-lg ${className}`}>
+      {children}
+    </div>
+  );
 }
 
-Card.Header = function CardHeader({ children }) {
-  return <div className="p-4 border-b font-bold">{children}</div>;
+Card.Photos = function CardPhotos({ children }) {
+  return <div className="w-2/5 p-4">{children}</div>;
 };
 
-Card.Body = function CardBody({ children }) {
-  return <div className="p-4">{children}</div>;
+Card.Details = function CardDetails({ children }) {
+  return <div className="w-3/5 p-6">{children}</div>;
 };
 
 // Usage
-<Card>
-  <Card.Header>Habit Details</Card.Header>
-  <Card.Body>Content here</Card.Body>
+<Card className="rotate-5">
+  <Card.Photos>
+    <PhotoStack photos={photos} />
+  </Card.Photos>
+  <Card.Details>
+    <WeddingDetails />
+  </Card.Details>
 </Card>
 ```
 
 ### Props Design
 
 ```jsx
-// Prefer specific props over spreading
-// Good
-function Button({ onClick, disabled, children, variant = 'primary' }) {
-  return <button onClick={onClick} disabled={disabled}>{children}</button>;
-}
-
-// Avoid excessive spreading
-// Bad - hard to know what props are accepted
-function Button(props) {
-  return <button {...props} />;
-}
-
 // Accept className for styling flexibility
-function Card({ children, className = '' }) {
-  return <div className={`base-styles ${className}`}>{children}</div>;
-}
-```
-
-### Children Pattern
-
-```jsx
-// Children for composition
-function Layout({ children }) {
+function Envelope({ children, isOpen, onClick, className = '' }) {
   return (
-    <div className="container mx-auto">
-      <Header />
-      <main>{children}</main>
-      <Footer />
+    <div
+      className={`envelope ${isOpen ? 'open' : ''} ${className}`}
+      onClick={onClick}
+    >
+      {children}
     </div>
   );
 }
 
-// Render props for more control
-function HabitList({ habits, renderItem }) {
+// Forward refs for animation targets
+const InviteCard = forwardRef(function InviteCard({ children }, ref) {
   return (
-    <ul>
-      {habits.map(habit => (
-        <li key={habit.id}>{renderItem(habit)}</li>
-      ))}
-    </ul>
+    <div ref={ref} className="invite-card">
+      {children}
+    </div>
   );
-}
-
-// Usage
-<HabitList
-  habits={habits}
-  renderItem={(habit) => <HabitCard habit={habit} />}
-/>
+});
 ```
 
 ---
 
 ## 3. State Management
 
-### When to Use What
-
-| State Type | Solution |
-|------------|----------|
-| Server/async data | TanStack Query |
-| Form state | react-hook-form or useState |
-| Local UI state | useState |
-| Shared UI state | Context or Zustand |
-| URL state | React Router |
-
-### useState Best Practices
+### Animation State Machine
 
 ```jsx
-// Group related state
-const [habit, setHabit] = useState({ name: '', description: '' });
-
-// vs multiple useState (fine for independent values)
-const [name, setName] = useState('');
-const [isOpen, setIsOpen] = useState(false);
-
-// Functional updates for state based on previous value
-setCount(prev => prev + 1);
-
-// Initialize expensive state lazily
-const [data, setData] = useState(() => expensiveComputation());
-```
-
-### Lifting State Up
-
-```jsx
-// Parent owns the state, children receive via props
-function Dashboard() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  return (
-    <>
-      <DatePicker date={selectedDate} onChange={setSelectedDate} />
-      <HabitList date={selectedDate} />
-      <Stats date={selectedDate} />
-    </>
-  );
-}
-```
-
-### Context API
-
-```jsx
-// Create context
-const HabitContext = createContext(null);
-
-// Provider component
-function HabitProvider({ children }) {
-  const [habits, setHabits] = useState([]);
-
-  const value = {
-    habits,
-    addHabit: (habit) => setHabits(prev => [...prev, habit]),
-    removeHabit: (id) => setHabits(prev => prev.filter(h => h.id !== id)),
-  };
-
-  return (
-    <HabitContext.Provider value={value}>
-      {children}
-    </HabitContext.Provider>
-  );
-}
-
-// Custom hook for consuming context
-function useHabitContext() {
-  const context = useContext(HabitContext);
-  if (!context) {
-    throw new Error('useHabitContext must be used within HabitProvider');
-  }
-  return context;
-}
-
-// Usage
-function HabitList() {
-  const { habits, removeHabit } = useHabitContext();
-  // ...
-}
-```
-
-### Zustand (Simple Alternative to Redux)
-
-```javascript
-// store/habits.js
-import { create } from 'zustand';
-
-const useHabitStore = create((set) => ({
-  selectedHabitId: null,
-  filterStatus: 'all',
-  setSelectedHabit: (id) => set({ selectedHabitId: id }),
-  setFilter: (status) => set({ filterStatus: status }),
-}));
-
-// Usage in component
-function HabitFilter() {
-  const { filterStatus, setFilter } = useHabitStore();
-  // ...
-}
-```
-
----
-
-## 4. Data Fetching
-
-### TanStack Query Setup
-
-```jsx
-// main.jsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
-});
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Router />
-    </QueryClientProvider>
-  );
-}
-```
-
-### Basic Query
-
-```javascript
-// hooks/useHabits.js
-import { useQuery } from '@tanstack/react-query';
-import { fetchHabits } from '../api/habits';
-
-export function useHabits() {
-  return useQuery({
-    queryKey: ['habits'],
-    queryFn: fetchHabits,
-  });
-}
-
-// Usage in component
-function HabitList() {
-  const { data: habits, isLoading, error } = useHabits();
-
-  if (isLoading) return <Spinner />;
-  if (error) return <Error message={error.message} />;
-
-  return (
-    <ul>
-      {habits.map(habit => <HabitCard key={habit.id} habit={habit} />)}
-    </ul>
-  );
-}
-```
-
-### Query with Parameters
-
-```javascript
-export function useHabit(habitId) {
-  return useQuery({
-    queryKey: ['habits', habitId],
-    queryFn: () => fetchHabit(habitId),
-    enabled: !!habitId, // Only run if habitId exists
-  });
-}
-
-export function useCompletions(habitId, month) {
-  return useQuery({
-    queryKey: ['completions', habitId, month],
-    queryFn: () => fetchCompletions(habitId, month),
-  });
-}
-```
-
-### Mutations
-
-```javascript
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-export function useCreateHabit() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: createHabit,
-    onSuccess: () => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['habits'] });
-    },
-  });
-}
-
-export function useCompleteHabit() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ habitId, date }) => completeHabit(habitId, date),
-    onSuccess: (_, { habitId }) => {
-      queryClient.invalidateQueries({ queryKey: ['habits'] });
-      queryClient.invalidateQueries({ queryKey: ['completions', habitId] });
-    },
-  });
-}
-
-// Usage
-function HabitCard({ habit }) {
-  const { mutate: complete, isPending } = useCompleteHabit();
-
-  return (
-    <button
-      onClick={() => complete({ habitId: habit.id, date: today })}
-      disabled={isPending}
-    >
-      {isPending ? 'Saving...' : 'Complete'}
-    </button>
-  );
-}
-```
-
-### Optimistic Updates
-
-```javascript
-export function useCompleteHabit() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: completeHabit,
-    onMutate: async ({ habitId, date }) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['habits'] });
-
-      // Snapshot previous value
-      const previousHabits = queryClient.getQueryData(['habits']);
-
-      // Optimistically update
-      queryClient.setQueryData(['habits'], (old) =>
-        old.map(h => h.id === habitId
-          ? { ...h, completedToday: true, currentStreak: h.currentStreak + 1 }
-          : h
-        )
-      );
-
-      return { previousHabits };
-    },
-    onError: (err, variables, context) => {
-      // Rollback on error
-      queryClient.setQueryData(['habits'], context.previousHabits);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['habits'] });
-    },
-  });
-}
-```
-
-### API Client
-
-```javascript
-// lib/api.js
-const API_BASE = '/api';
-
-async function request(endpoint, options = {}) {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || 'An error occurred');
-  }
-
-  if (response.status === 204) return null;
-  return response.json();
-}
-
-// api/habits.js
-export const fetchHabits = () => request('/habits');
-export const fetchHabit = (id) => request(`/habits/${id}`);
-export const createHabit = (data) => request('/habits', { method: 'POST', body: JSON.stringify(data) });
-export const completeHabit = (id, date) => request(`/habits/${id}/complete`, { method: 'POST', body: JSON.stringify({ date }) });
-```
-
----
-
-## 5. Forms & Validation
-
-### React Hook Form + Zod
-
-```jsx
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-const habitSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  description: z.string().max(500).optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color').default('#10B981'),
-});
-
-function HabitForm({ onSubmit, defaultValues }) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm({
-    resolver: zodResolver(habitSchema),
-    defaultValues,
-  });
-
-  const handleFormSubmit = async (data) => {
-    await onSubmit(data);
-    reset();
-  };
-
-  return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div>
-        <label htmlFor="name">Name</label>
-        <input
-          id="name"
-          {...register('name')}
-          className={errors.name ? 'border-red-500' : ''}
-        />
-        {errors.name && <span className="text-red-500">{errors.name.message}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="description">Description</label>
-        <textarea id="description" {...register('description')} />
-        {errors.description && <span className="text-red-500">{errors.description.message}</span>}
-      </div>
-
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving...' : 'Save'}
-      </button>
-    </form>
-  );
-}
-```
-
-### Simple Controlled Form
-
-```jsx
-function SimpleForm({ onSubmit }) {
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim()) {
-      setError('Name is required');
-      return;
-    }
-    onSubmit({ name });
-    setName('');
-    setError('');
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Habit name"
-      />
-      {error && <span className="text-red-500">{error}</span>}
-      <button type="submit">Add</button>
-    </form>
-  );
-}
-```
-
----
-
-## 6. Styling with Tailwind
-
-### Vite Configuration
-
-```javascript
-// vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
-});
-
-// tailwind.config.js
-export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
-  theme: {
-    extend: {
-      colors: {
-        primary: '#10B981',
-      },
-    },
-  },
-  plugins: [],
+// State machine pattern for complex animations
+const STATES = {
+  IDLE: 'idle',           // Envelope closed
+  OPENING: 'opening',     // Flap rotating open
+  REVEALING: 'revealing', // Card sliding out
+  COMPLETE: 'complete'    // Animation finished
 };
 
-// src/index.css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
+function useAnimationState() {
+  const [state, setState] = useState(STATES.IDLE);
 
-### Component Styling Patterns
-
-```jsx
-// Inline classes
-function Button({ children, variant = 'primary' }) {
-  const baseClasses = 'px-4 py-2 rounded font-medium transition-colors';
-  const variantClasses = {
-    primary: 'bg-primary text-white hover:bg-primary/90',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    danger: 'bg-red-500 text-white hover:bg-red-600',
+  const handlers = {
+    start: () => setState(STATES.OPENING),
+    onFlapOpen: () => setState(STATES.REVEALING),
+    onCardRevealed: () => setState(STATES.COMPLETE),
+    reset: () => setState(STATES.IDLE),
   };
 
-  return (
-    <button className={`${baseClasses} ${variantClasses[variant]}`}>
-      {children}
-    </button>
-  );
+  return { state, ...handlers };
 }
 
-// Using clsx for conditional classes
-import clsx from 'clsx';
+// Usage
+function App() {
+  const { state, start, onFlapOpen, onCardRevealed, reset } = useAnimationState();
 
-function HabitCard({ habit, isCompleted }) {
   return (
-    <div className={clsx(
-      'p-4 border rounded',
-      isCompleted && 'bg-green-50 border-green-200',
-      !isCompleted && 'bg-white border-gray-200'
-    )}>
-      {habit.name}
+    <div>
+      <Envelope
+        isOpen={state !== STATES.IDLE}
+        onClick={state === STATES.IDLE ? start : undefined}
+        onFlapAnimationComplete={onFlapOpen}
+      />
+      {state !== STATES.IDLE && (
+        <InviteCard onAnimationComplete={onCardRevealed} />
+      )}
+      {state === STATES.COMPLETE && (
+        <ReplayButton onClick={reset} />
+      )}
     </div>
   );
 }
 ```
 
-### Responsive Design
+### useState Best Practices
+
+```jsx
+// Group related state
+const [animation, setAnimation] = useState({
+  isOpen: false,
+  stage: 'idle',
+  progress: 0
+});
+
+// Functional updates for state based on previous value
+setAnimation(prev => ({ ...prev, isOpen: true }));
+
+// Initialize expensive state lazily
+const [photos, setPhotos] = useState(() => loadPhotos());
+```
+
+---
+
+## 4. Framer Motion Animations
+
+> **Source:** Context7 query of Motion/Framer Motion official documentation
+
+### Basic Animation
+
+```jsx
+import { motion } from 'framer-motion';
+
+// Simple animate prop
+<motion.div
+  animate={{ opacity: 1, y: 0 }}
+  initial={{ opacity: 0, y: 20 }}
+  transition={{ duration: 0.5 }}
+>
+  Content
+</motion.div>
+```
+
+### Animation Variants (Recommended for Complex Sequences)
+
+```jsx
+// Define variants for reusable animations
+const envelopeFlapVariants = {
+  closed: {
+    rotateX: 0,
+    transformOrigin: 'top center'
+  },
+  open: {
+    rotateX: -180,
+    transformOrigin: 'top center',
+    transition: { duration: 0.5, ease: 'easeInOut' }
+  }
+};
+
+const cardVariants = {
+  hidden: {
+    y: 200,
+    opacity: 0,
+    rotate: -90
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    rotate: 5,
+    transition: {
+      duration: 1.5,
+      ease: [0.16, 1, 0.3, 1] // Custom cubic bezier
+    }
+  }
+};
+
+// Usage with variants
+function EnvelopeFlap({ isOpen, onAnimationComplete }) {
+  return (
+    <motion.div
+      className="envelope-flap"
+      variants={envelopeFlapVariants}
+      initial="closed"
+      animate={isOpen ? "open" : "closed"}
+      onAnimationComplete={onAnimationComplete}
+      style={{ perspective: 1000 }}
+    />
+  );
+}
+```
+
+### Staggered Children Animations
+
+```jsx
+import { motion, stagger } from 'framer-motion';
+
+// Parent controls children timing
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,      // Delay between each child
+      delayChildren: 0.3         // Initial delay before first child
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+function ActionButtons({ links }) {
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {links.map((link, i) => (
+        <motion.a
+          key={i}
+          href={link.url}
+          variants={itemVariants}
+        >
+          {link.label}
+        </motion.a>
+      ))}
+    </motion.div>
+  );
+}
+```
+
+### useAnimate Hook for Imperative Control
+
+```jsx
+import { useAnimate } from 'framer-motion';
+
+function EnvelopeAnimation() {
+  const [scope, animate] = useAnimate();
+
+  const playSequence = async () => {
+    // Sequential animations
+    await animate('.envelope-flap', { rotateX: -180 }, { duration: 0.5 });
+    await animate('.invite-card', { y: 0, opacity: 1 }, { duration: 0.8 });
+    await animate('.invite-card', { rotate: 5 }, { duration: 0.5 });
+  };
+
+  return (
+    <div ref={scope} onClick={playSequence}>
+      <div className="envelope-flap" />
+      <div className="invite-card" style={{ opacity: 0, y: 100 }} />
+    </div>
+  );
+}
+```
+
+### stagger() Function for Multiple Elements
+
+```jsx
+import { animate, stagger } from 'framer-motion';
+
+// Stagger with options
+animate(
+  '.button',
+  { opacity: 1, y: 0 },
+  {
+    delay: stagger(0.1, {
+      startDelay: 0.5,    // Wait before starting
+      from: 'center'      // Start from center outward
+    })
+  }
+);
+
+// Available 'from' options: 'first', 'center', 'last', or numeric index
+```
+
+### Custom Data with Variants
+
+```jsx
+// Pass custom data to dynamic variant functions
+const photoVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: (custom) => ({
+    opacity: 1,
+    scale: 1,
+    transition: { delay: custom * 0.2 }  // Each photo delays based on index
+  })
+};
+
+function PhotoStack({ photos }) {
+  return (
+    <motion.div initial="hidden" animate="visible">
+      {photos.map((photo, index) => (
+        <motion.img
+          key={index}
+          src={photo}
+          custom={index}  // Pass index to variant
+          variants={photoVariants}
+        />
+      ))}
+    </motion.div>
+  );
+}
+```
+
+### 3D Transforms
+
+```jsx
+// For envelope flap 3D rotation
+<motion.div
+  style={{
+    perspective: 1000,           // Enable 3D space
+    transformStyle: 'preserve-3d'
+  }}
+>
+  <motion.div
+    animate={{ rotateX: isOpen ? -180 : 0 }}
+    style={{ transformOrigin: 'top center' }}
+    transition={{ duration: 0.6, ease: 'easeInOut' }}
+  />
+</motion.div>
+
+// Custom transform order with transformTemplate
+<motion.div
+  style={{ x: 0, rotate: 180 }}
+  transformTemplate={
+    ({ x, rotate }) => `rotate(${rotate}deg) translateX(${x}px)`
+  }
+/>
+```
+
+### AnimatePresence for Exit Animations
+
+```jsx
+import { motion, AnimatePresence } from 'framer-motion';
+
+function App() {
+  const [showCard, setShowCard] = useState(false);
+
+  return (
+    <AnimatePresence mode="wait">
+      {!showCard ? (
+        <motion.div
+          key="envelope"
+          exit={{ opacity: 0, scale: 0.9 }}
+        >
+          <Envelope onClick={() => setShowCard(true)} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="card"
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+        >
+          <InviteCard />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+```
+
+---
+
+## 5. Styling with Tailwind
+
+> **Source:** Context7 query of Tailwind CSS v3 documentation
+
+### Custom Theme Configuration
+
+```javascript
+// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
+  theme: {
+    // Custom breakpoints
+    screens: {
+      'sm': '480px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1440px',
+    },
+    extend: {
+      // Custom colors for wedding theme
+      colors: {
+        'cream': '#FAF9F6',
+        'beige': '#F5F5DC',
+        'charcoal': '#36454F',
+        'gold': '#D4AF37',
+      },
+      // Custom fonts
+      fontFamily: {
+        'script': ['Great Vibes', 'cursive'],
+        'serif': ['Playfair Display', 'serif'],
+        'sans': ['Lato', 'sans-serif'],
+      },
+      // Custom spacing
+      spacing: {
+        '128': '32rem',
+        '144': '36rem',
+      },
+      // Custom border radius
+      borderRadius: {
+        '4xl': '2rem',
+      },
+      // Custom rotation for card tilt
+      rotate: {
+        '5': '5deg',
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+### Custom Keyframe Animations
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'pulse-soft': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.6s ease-out',
+        'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+      },
+    },
+  },
+};
+
+// Usage in JSX
+<div className="animate-fade-in-up">Content</div>
+<div className="animate-pulse-soft">Tap to open</div>
+```
+
+### CSS File Setup
+
+```css
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;600&family=Lato:wght@300;400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream text-charcoal font-sans;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-full font-medium transition-all duration-300;
+    @apply hover:scale-105 active:scale-95;
+  }
+
+  .btn-primary {
+    @apply bg-charcoal text-cream hover:bg-charcoal/90;
+  }
+
+  .btn-outline {
+    @apply border-2 border-charcoal text-charcoal hover:bg-charcoal hover:text-cream;
+  }
+}
+```
+
+### Responsive Design (Mobile-First)
 
 ```jsx
 // Mobile-first approach
 <div className="
-  p-2 md:p-4 lg:p-6
-  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4
-  text-sm md:text-base
+  p-4 md:p-6 lg:p-8
+  text-base md:text-lg
+  grid grid-cols-1 md:grid-cols-2
+  gap-4 md:gap-6
 ">
   {/* Content */}
 </div>
 
-// Breakpoints: sm(640px) md(768px) lg(1024px) xl(1280px) 2xl(1536px)
+// Responsive card layout
+<div className="
+  w-full max-w-sm md:max-w-md lg:max-w-lg
+  mx-auto
+  rotate-0 md:rotate-5
+">
+  <InviteCard />
+</div>
+
+// Breakpoints: sm(480px) md(768px) lg(1024px) xl(1440px)
 ```
 
-### Common Patterns
+### Hover and Interactive States
 
 ```jsx
-// Card
-<div className="bg-white rounded-lg shadow-md p-4">
+// Hover effects
+<button className="
+  bg-charcoal text-cream
+  hover:bg-charcoal/80
+  hover:scale-105
+  hover:-translate-y-1
+  transition-all duration-300
+">
+  RSVP
+</button>
 
-// Flex centering
-<div className="flex items-center justify-center">
+// Active/pressed state
+<button className="active:scale-95 active:bg-charcoal/70">
+  Click me
+</button>
 
-// Grid layout
-<div className="grid grid-cols-7 gap-1">
+// Focus states for accessibility
+<button className="
+  focus:outline-none
+  focus:ring-2
+  focus:ring-gold
+  focus:ring-offset-2
+">
+  Focus me
+</button>
+```
 
-// Truncate text
-<p className="truncate">Long text...</p>
+---
 
-// Focus ring
-<button className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+## 6. Vite Configuration
 
-// Disabled state
-<button className="disabled:opacity-50 disabled:cursor-not-allowed" disabled={isPending}>
+> **Source:** Context7 query of Vite official documentation
+
+### Basic Setup with React
+
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 3000,
+    open: true,
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+  },
+});
+```
+
+### Environment Variables
+
+```bash
+# .env
+VITE_RSVP_URL=https://forms.google.com/your-form-id
+VITE_WEDDING_WEBSITE_URL=https://your-wedding-website.com
+VITE_REGISTRY_URL=https://your-registry-url.com
+VITE_DIRECTIONS_URL=https://maps.google.com/?q=...
+
+# .env.production (overrides for production)
+VITE_APP_TITLE=Sungin & Diane Wedding
+```
+
+```jsx
+// Accessing in React
+const rsvpUrl = import.meta.env.VITE_RSVP_URL;
+const appTitle = import.meta.env.VITE_APP_TITLE;
+
+function ActionButtons() {
+  return (
+    <a href={import.meta.env.VITE_RSVP_URL}>RSVP</a>
+  );
+}
+```
+
+### Static Assets
+
+```jsx
+// Images in src/assets (processed by Vite)
+import photo1 from './assets/photos/photo1.jpg';
+<img src={photo1} alt="Engagement photo" />
+
+// Images in public folder (copied as-is)
+<img src="/og-image.jpg" alt="Preview" />
+
+// Dynamic imports
+const photos = import.meta.glob('./assets/photos/*.jpg', { eager: true });
+```
+
+### Build Optimization
+
+```javascript
+// vite.config.js
+export default defineConfig({
+  build: {
+    target: 'esnext',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,  // Remove console.log in production
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'framer-motion': ['framer-motion'],
+        },
+      },
+    },
+  },
+});
 ```
 
 ---
 
 ## 7. Performance
 
-### React.memo
+### React.memo for Animation Components
 
 ```jsx
-// Only re-renders when props change
-const HabitCard = memo(function HabitCard({ habit, onComplete }) {
+// Memoize components that don't need to re-render
+const PhotoStack = memo(function PhotoStack({ photos }) {
   return (
-    <div>
-      <h3>{habit.name}</h3>
-      <button onClick={() => onComplete(habit.id)}>Complete</button>
+    <div className="photo-stack">
+      {photos.map((photo, i) => (
+        <img key={i} src={photo} alt="" />
+      ))}
     </div>
   );
 });
 
-// Custom comparison
-const HabitCard = memo(function HabitCard({ habit, onComplete }) {
-  // ...
-}, (prevProps, nextProps) => {
-  return prevProps.habit.id === nextProps.habit.id &&
-         prevProps.habit.completedToday === nextProps.habit.completedToday;
+// Custom comparison for props
+const WeddingDetails = memo(function WeddingDetails({ date, venue }) {
+  return (
+    <div>
+      <p>{date}</p>
+      <p>{venue}</p>
+    </div>
+  );
+}, (prev, next) => {
+  return prev.date === next.date && prev.venue === next.venue;
 });
 ```
 
-### useCallback and useMemo
+### useCallback for Event Handlers
 
 ```jsx
-// useCallback - memoize functions passed to child components
-function HabitList({ habits }) {
-  const handleComplete = useCallback((id) => {
-    // ...
-  }, []); // Empty deps = stable reference
-
-  return habits.map(h => (
-    <HabitCard key={h.id} habit={h} onComplete={handleComplete} />
-  ));
-}
-
-// useMemo - memoize expensive calculations
-function Stats({ completions }) {
-  const stats = useMemo(() => {
-    return calculateExpensiveStats(completions);
-  }, [completions]);
-
-  return <div>{stats.average}</div>;
-}
-```
-
-**When to use**:
-- `useCallback`: Functions passed to memoized children
-- `useMemo`: Expensive calculations, referential equality for deps
-
-**When NOT to use**:
-- Simple calculations
-- Primitive values
-- Functions not passed to children
-
-### Code Splitting
-
-```jsx
-import { lazy, Suspense } from 'react';
-
-// Lazy load routes
-const Settings = lazy(() => import('./pages/Settings'));
-const Analytics = lazy(() => import('./pages/Analytics'));
-
 function App() {
+  // Stable function reference for child components
+  const handleEnvelopeClick = useCallback(() => {
+    startAnimation();
+  }, []);
+
+  const handleReplay = useCallback(() => {
+    resetAnimation();
+  }, []);
+
   return (
-    <Suspense fallback={<Spinner />}>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/analytics" element={<Analytics />} />
-      </Routes>
-    </Suspense>
+    <>
+      <Envelope onClick={handleEnvelopeClick} />
+      <ReplayButton onClick={handleReplay} />
+    </>
   );
 }
 ```
 
-### List Virtualization
+### Image Optimization
 
 ```jsx
-// For very long lists (1000+ items), use react-window
-import { FixedSizeList } from 'react-window';
+// Lazy load images below the fold
+<img
+  src={photo}
+  alt=""
+  loading="lazy"
+  decoding="async"
+/>
 
-function VirtualizedList({ items }) {
-  return (
-    <FixedSizeList
-      height={400}
-      width="100%"
-      itemCount={items.length}
-      itemSize={50}
-    >
-      {({ index, style }) => (
-        <div style={style}>{items[index].name}</div>
-      )}
-    </FixedSizeList>
-  );
-}
+// Specify dimensions to prevent layout shift
+<img
+  src={photo}
+  alt=""
+  width={300}
+  height={400}
+  className="object-cover"
+/>
+
+// Use WebP with fallback
+<picture>
+  <source srcSet={photoWebp} type="image/webp" />
+  <img src={photoJpg} alt="" />
+</picture>
+```
+
+### Animation Performance
+
+```jsx
+// Use transform instead of top/left (GPU accelerated)
+// GOOD
+<motion.div animate={{ x: 100, y: 50 }} />
+
+// AVOID
+<motion.div animate={{ left: 100, top: 50 }} />
+
+// Use will-change for complex animations
+<motion.div
+  style={{ willChange: 'transform, opacity' }}
+  animate={{ scale: 1.1 }}
+/>
 ```
 
 ---
 
 ## 8. Hooks Patterns
 
-### Custom Hooks
+### Custom Animation State Hook
 
 ```javascript
-// useLocalStorage
-function useLocalStorage(key, initialValue) {
-  const [value, setValue] = useState(() => {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : initialValue;
-  });
+// hooks/useAnimationState.js
+import { useState, useCallback } from 'react';
+
+const STATES = {
+  IDLE: 'idle',
+  OPENING: 'opening',
+  REVEALING: 'revealing',
+  COMPLETE: 'complete'
+};
+
+export function useAnimationState() {
+  const [state, setState] = useState(STATES.IDLE);
+
+  const start = useCallback(() => setState(STATES.OPENING), []);
+  const onFlapOpen = useCallback(() => setState(STATES.REVEALING), []);
+  const onCardRevealed = useCallback(() => setState(STATES.COMPLETE), []);
+  const reset = useCallback(() => setState(STATES.IDLE), []);
+
+  return {
+    state,
+    isIdle: state === STATES.IDLE,
+    isAnimating: state === STATES.OPENING || state === STATES.REVEALING,
+    isComplete: state === STATES.COMPLETE,
+    start,
+    onFlapOpen,
+    onCardRevealed,
+    reset,
+  };
+}
+```
+
+### useMediaQuery Hook
+
+```javascript
+// hooks/useMediaQuery.js
+import { useState, useEffect } from 'react';
+
+export function useMediaQuery(query) {
+  const [matches, setMatches] = useState(
+    () => window.matchMedia(query).matches
+  );
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value]);
+    const mediaQuery = window.matchMedia(query);
+    const handler = (e) => setMatches(e.matches);
 
-  return [value, setValue];
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, [query]);
+
+  return matches;
 }
 
-// useDebounce
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+// Usage
+function App() {
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
-// useToggle
-function useToggle(initialValue = false) {
-  const [value, setValue] = useState(initialValue);
-  const toggle = useCallback(() => setValue(v => !v), []);
-  return [value, toggle];
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 }
 ```
 
 ### useEffect Patterns
 
 ```jsx
-// Cleanup function
+// Event listeners with cleanup
 useEffect(() => {
-  const controller = new AbortController();
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') resetAnimation();
+  };
 
-  fetch('/api/data', { signal: controller.signal })
-    .then(res => res.json())
-    .then(setData);
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+}, [resetAnimation]);
 
-  return () => controller.abort(); // Cleanup on unmount
-}, []);
-
-// Event listeners
+// Preload images
 useEffect(() => {
-  const handleResize = () => setWidth(window.innerWidth);
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
-
-// Sync with external system
-useEffect(() => {
-  const subscription = externalStore.subscribe(setData);
-  return () => subscription.unsubscribe();
-}, []);
-```
-
-### useEffect Pitfalls
-
-```jsx
-// BAD: Missing dependency
-useEffect(() => {
-  fetchData(userId); // userId not in deps - stale closure
-}, []);
-
-// GOOD: Include all dependencies
-useEffect(() => {
-  fetchData(userId);
-}, [userId]);
-
-// BAD: Object/array in deps (new reference every render)
-useEffect(() => {
-  doSomething(options); // options = {} creates new object each render
-}, [options]);
-
-// GOOD: Memoize or use primitive values
-const memoizedOptions = useMemo(() => options, [options.key1, options.key2]);
-useEffect(() => {
-  doSomething(memoizedOptions);
-}, [memoizedOptions]);
+  photos.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+}, [photos]);
 ```
 
 ---
 
-## 9. Routing
-
-### React Router v6 Setup
-
-```jsx
-// App.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="habits/:habitId" element={<HabitDetail />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-}
-```
-
-### Layout Route
-
-```jsx
-// Layout.jsx
-import { Outlet, Link } from 'react-router-dom';
-
-function Layout() {
-  return (
-    <div className="min-h-screen">
-      <nav className="bg-white shadow">
-        <Link to="/">Dashboard</Link>
-        <Link to="/settings">Settings</Link>
-      </nav>
-      <main className="container mx-auto p-4">
-        <Outlet /> {/* Child routes render here */}
-      </main>
-    </div>
-  );
-}
-```
-
-### Route Parameters
-
-```jsx
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-
-function HabitDetail() {
-  const { habitId } = useParams();
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const month = searchParams.get('month') || getCurrentMonth();
-
-  return (
-    <div>
-      <button onClick={() => navigate('/')}>Back</button>
-      <button onClick={() => setSearchParams({ month: 'next' })}>
-        Next Month
-      </button>
-    </div>
-  );
-}
-```
-
-### Navigation
-
-```jsx
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-
-// Simple link
-<Link to="/settings">Settings</Link>
-
-// Active styling
-<NavLink
-  to="/"
-  className={({ isActive }) => isActive ? 'text-primary' : 'text-gray-600'}
->
-  Dashboard
-</NavLink>
-
-// Programmatic navigation
-const navigate = useNavigate();
-navigate('/habits/1');
-navigate(-1); // Go back
-navigate('/', { replace: true }); // Replace history
-```
-
----
-
-## 10. Error Handling
-
-### Error Boundaries
-
-```jsx
-import { Component } from 'react';
-
-class ErrorBoundary extends Component {
-  state = { hasError: false, error: null };
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.error('Error caught:', error, errorInfo);
-    // Send to error tracking service
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback || (
-        <div className="p-4 text-red-500">
-          <h2>Something went wrong</h2>
-          <button onClick={() => this.setState({ hasError: false })}>
-            Try again
-          </button>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-// Usage
-<ErrorBoundary fallback={<ErrorPage />}>
-  <App />
-</ErrorBoundary>
-```
-
-### Async Error Handling
-
-```jsx
-function HabitList() {
-  const { data, error, isError } = useHabits();
-
-  if (isError) {
-    return (
-      <div className="p-4 bg-red-50 text-red-700 rounded">
-        <p>Failed to load habits: {error.message}</p>
-        <button onClick={() => refetch()}>Retry</button>
-      </div>
-    );
-  }
-
-  return <ul>{/* ... */}</ul>;
-}
-```
-
-### Toast Notifications
-
-```jsx
-// Using a toast library like react-hot-toast
-import toast from 'react-hot-toast';
-
-function useCreateHabit() {
-  return useMutation({
-    mutationFn: createHabit,
-    onSuccess: () => {
-      toast.success('Habit created!');
-    },
-    onError: (error) => {
-      toast.error(`Failed: ${error.message}`);
-    },
-  });
-}
-```
-
----
-
-## 11. Testing
-
-### Setup with Vitest
-
-```javascript
-// vite.config.js
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.js',
-  },
-});
-
-// src/test/setup.js
-import '@testing-library/jest-dom';
-```
-
-### Component Testing
-
-```jsx
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-describe('HabitCard', () => {
-  it('renders habit name', () => {
-    render(<HabitCard habit={{ id: 1, name: 'Exercise' }} />);
-    expect(screen.getByText('Exercise')).toBeInTheDocument();
-  });
-
-  it('calls onComplete when button clicked', async () => {
-    const onComplete = vi.fn();
-    render(<HabitCard habit={{ id: 1, name: 'Exercise' }} onComplete={onComplete} />);
-
-    await userEvent.click(screen.getByRole('button', { name: /complete/i }));
-
-    expect(onComplete).toHaveBeenCalledWith(1);
-  });
-});
-```
-
-### Testing with Providers
-
-```jsx
-// test/utils.jsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
-
-function createTestQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
-  });
-}
-
-export function renderWithProviders(ui) {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        {ui}
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
-}
-```
-
-### Mocking API Calls
-
-```jsx
-import { vi } from 'vitest';
-import * as api from '../api/habits';
-
-vi.mock('../api/habits');
-
-it('loads and displays habits', async () => {
-  api.fetchHabits.mockResolvedValue([
-    { id: 1, name: 'Exercise' },
-  ]);
-
-  renderWithProviders(<HabitList />);
-
-  await waitFor(() => {
-    expect(screen.getByText('Exercise')).toBeInTheDocument();
-  });
-});
-```
-
----
-
-## 12. Accessibility
+## 9. Accessibility
 
 ### Semantic HTML
 
 ```jsx
-// Use semantic elements
-<header>...</header>
-<nav>...</nav>
-<main>...</main>
-<article>...</article>
-<aside>...</aside>
-<footer>...</footer>
-
-// Use headings properly (h1 > h2 > h3)
-<h1>Dashboard</h1>
-<section>
-  <h2>Today's Habits</h2>
-</section>
+<main className="min-h-screen flex items-center justify-center">
+  <article className="invite-card">
+    <header>
+      <h1 className="font-script text-4xl">Sungin & Diane</h1>
+    </header>
+    <section>
+      <h2 className="sr-only">Wedding Details</h2>
+      <p>Saturday, September 19, 2026</p>
+    </section>
+    <nav aria-label="Wedding links">
+      <a href={rsvpUrl}>RSVP</a>
+    </nav>
+  </article>
+</main>
 ```
 
-### ARIA Attributes
+### Interactive Elements
 
 ```jsx
-// Labels
-<button aria-label="Close modal">×</button>
-
-// Live regions (for dynamic content)
-<div aria-live="polite" aria-atomic="true">
-  {statusMessage}
-</div>
-
-// States
-<button aria-pressed={isCompleted}>Complete</button>
-<button aria-expanded={isOpen}>Menu</button>
-
-// Roles
-<div role="alert">{errorMessage}</div>
-```
-
-### Focus Management
-
-```jsx
-// Focus trap in modals
-function Modal({ isOpen, onClose, children }) {
-  const modalRef = useRef();
-
-  useEffect(() => {
-    if (isOpen) {
-      modalRef.current?.focus();
-    }
-  }, [isOpen]);
-
-  return isOpen ? (
-    <div
-      ref={modalRef}
-      tabIndex={-1}
-      role="dialog"
-      aria-modal="true"
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
-    >
-      {children}
-    </div>
-  ) : null;
-}
-```
-
-### Keyboard Navigation
-
-```jsx
-// Handle keyboard interactions
-function ListItem({ onSelect }) {
+// Clickable envelope with keyboard support
+function Envelope({ onClick }) {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onSelect();
+      onClick();
     }
   };
 
@@ -1229,59 +951,87 @@ function ListItem({ onSelect }) {
     <div
       role="button"
       tabIndex={0}
-      onClick={onSelect}
+      onClick={onClick}
       onKeyDown={handleKeyDown}
+      aria-label="Open wedding invitation"
+      className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold"
     >
-      Item
+      {/* Envelope content */}
     </div>
   );
 }
 ```
 
+### Reduced Motion Support
+
+```jsx
+// Respect user's motion preferences
+const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+
+<motion.div
+  animate={isOpen ? 'open' : 'closed'}
+  variants={prefersReducedMotion ? reducedVariants : fullVariants}
+/>
+
+// Or disable animations entirely
+<motion.div
+  animate={{ opacity: 1 }}
+  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5 }}
+/>
+```
+
+### Screen Reader Announcements
+
+```jsx
+// Live region for animation status
+<div
+  aria-live="polite"
+  aria-atomic="true"
+  className="sr-only"
+>
+  {isComplete && 'Wedding invitation opened. View details below.'}
+</div>
+```
+
 ---
 
-## 13. Anti-Patterns
+## 10. Anti-Patterns
 
 ### Common Mistakes
 
 | Anti-Pattern | Problem | Solution |
 |--------------|---------|----------|
-| Props drilling | Hard to maintain | Context or composition |
-| Huge components | Hard to test/maintain | Split into smaller components |
-| useEffect for derived state | Unnecessary complexity | Compute during render |
-| Index as key | Bugs with reordering | Use stable unique IDs |
-| Direct DOM manipulation | Conflicts with React | Use refs sparingly |
+| Animating layout properties | Poor performance | Use transform (x, y, scale, rotate) |
+| Missing key prop | Animation glitches | Use stable unique IDs |
+| Inline objects in animate | Re-renders | Use variants or useMemo |
+| Giant components | Hard to maintain | Split into smaller pieces |
+| Forgetting cleanup | Memory leaks | Always return cleanup in useEffect |
 
 ### Code Examples
 
 ```jsx
-// BAD: Derived state in useEffect
-const [fullName, setFullName] = useState('');
+// BAD: Inline animation object (creates new object every render)
+<motion.div animate={{ x: 100, opacity: 1 }} />
+
+// GOOD: Use variants or define outside component
+const variants = { visible: { x: 100, opacity: 1 } };
+<motion.div variants={variants} animate="visible" />
+
+// BAD: Animating width/height (triggers layout)
+<motion.div animate={{ width: 300 }} />
+
+// GOOD: Animate transform (GPU accelerated)
+<motion.div animate={{ scaleX: 1.5 }} />
+
+// BAD: Missing cleanup
 useEffect(() => {
-  setFullName(`${firstName} ${lastName}`);
-}, [firstName, lastName]);
-
-// GOOD: Compute during render
-const fullName = `${firstName} ${lastName}`;
-
-// BAD: Index as key (causes bugs when list changes)
-{items.map((item, index) => <Item key={index} item={item} />)}
-
-// GOOD: Stable unique ID
-{items.map(item => <Item key={item.id} item={item} />)}
-
-// BAD: Fetching in useEffect without cleanup
-useEffect(() => {
-  fetch('/api/data').then(res => res.json()).then(setData);
+  window.addEventListener('resize', handler);
 }, []);
 
-// GOOD: Use TanStack Query or add cleanup
+// GOOD: With cleanup
 useEffect(() => {
-  let cancelled = false;
-  fetch('/api/data')
-    .then(res => res.json())
-    .then(data => { if (!cancelled) setData(data); });
-  return () => { cancelled = true; };
+  window.addEventListener('resize', handler);
+  return () => window.removeEventListener('resize', handler);
 }, []);
 ```
 
@@ -1289,31 +1039,40 @@ useEffect(() => {
 
 ## Quick Reference
 
-### Common Imports
+### Framer Motion Imports
 
 ```jsx
-// React
-import { useState, useEffect, useCallback, useMemo, useRef, memo, createContext, useContext } from 'react';
+import {
+  motion,           // Animated components
+  AnimatePresence,  // Exit animations
+  useAnimate,       // Imperative control
+  useInView,        // Viewport detection
+  stagger           // Staggered delays
+} from 'framer-motion';
+```
 
-// React Router
-import { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';
+### Common Animation Values
 
-// TanStack Query
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+```jsx
+// Easing presets
+transition: { ease: 'easeInOut' }  // Built-in
+transition: { ease: [0.16, 1, 0.3, 1] }  // Custom bezier
 
-// Form
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+// Duration
+transition: { duration: 0.5 }  // 500ms
+
+// Delay
+transition: { delay: 0.2 }  // 200ms delay
+
+// Spring physics
+transition: { type: 'spring', stiffness: 300, damping: 30 }
 ```
 
 ---
 
 ## Resources
 
+- [Motion Documentation](https://motion.dev/docs/react-quick-start)
 - [React Documentation](https://react.dev/)
-- [TanStack Query](https://tanstack.com/query/latest)
-- [React Router](https://reactrouter.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [React Hook Form](https://react-hook-form.com/)
-- [Zod](https://zod.dev/)
+- [Tailwind CSS v3](https://v3.tailwindcss.com/docs)
+- [Vite Guide](https://vitejs.dev/guide/)
