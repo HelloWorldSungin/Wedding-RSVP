@@ -1,0 +1,57 @@
+/* Google Fonts - must be first */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+@import "tailwindcss";
+
+/* Wedding E-Invite Custom Theme */
+@theme {
+  /* Colors */
+  --color-cream: #FAF9F6;
+  --color-beige: #F5F5DC;
+  --color-charcoal: #36454F;
+  --color-gold: #D4AF37;
+  --color-gold-dark: #B8962E;
+  --color-envelope: #F8F4E8;
+  --color-envelope-flap: #EDE8D8;
+  --color-envelope-shadow: rgba(54, 69, 79, 0.15);
+
+  /* Typography */
+  --font-script: "Great Vibes", cursive;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Lato", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Animation Easings */
+  --ease-envelope: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-card-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Shadows */
+  --shadow-card: 0 25px 50px -12px rgba(54, 69, 79, 0.25);
+  --shadow-envelope: 0 10px 40px rgba(54, 69, 79, 0.2);
+  --shadow-button: 0 4px 14px rgba(54, 69, 79, 0.1);
+}
+
+/* Base Styles */
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
