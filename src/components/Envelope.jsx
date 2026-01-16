@@ -4,50 +4,84 @@ import EnvelopeFlap from './EnvelopeFlap';
 
 /**
  * Envelope component with opening animation
- * Contains the flap and body of the envelope
+ * Realistic envelope matching the Paperless Post reference (Image #8)
+ * - V-shaped top flap dominates the upper portion
+ * - Side flaps visible in lower portion
+ * - Small bottom flap
  */
-function Envelope({ state, onClick, onFlapOpened }) {
+function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
   const isClosed = state === ANIMATION_STATES.CLOSED;
-  const isAnimating = state !== ANIMATION_STATES.CLOSED && state !== ANIMATION_STATES.OPEN;
+
+  const getEnvelopeAnimationState = () => {
+    if (state === ANIMATION_STATES.CLOSED || state === ANIMATION_STATES.OPENING) {
+      return 'closed';
+    }
+    return 'open';
+  };
 
   return (
     <motion.div
-      className="relative w-full aspect-[4/3] cursor-pointer"
+      className="relative w-full aspect-[5/4] cursor-pointer"
       onClick={isClosed ? onClick : undefined}
       whileHover={isClosed ? { scale: 1.02 } : {}}
       whileTap={isClosed ? { scale: 0.98 } : {}}
       style={{ perspective: '1000px' }}
+      variants={envelopeVariants}
+      animate={getEnvelopeAnimationState()}
     >
-      {/* Envelope Body */}
+      {/* Inner Lining - visible when flap opens */}
       <div
-        className="absolute inset-0 bg-envelope rounded-lg shadow-envelope overflow-hidden"
+        className="absolute inset-0 rounded-sm"
         style={{
-          boxShadow: 'var(--shadow-envelope)',
+          backgroundColor: 'var(--color-envelope-lining)',
         }}
-      >
-        {/* Inner shadow for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/5" />
+      />
 
-        {/* Envelope fold lines */}
-        <div className="absolute left-0 top-1/2 w-full h-px bg-charcoal/5 -rotate-12 origin-left" />
-        <div className="absolute right-0 top-1/2 w-full h-px bg-charcoal/5 rotate-12 origin-right" />
-      </div>
+      {/* Main envelope body */}
+      <div
+        className="absolute inset-0 rounded-sm"
+        style={{
+          backgroundColor: '#F9F9F9',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        }}
+      />
 
-      {/* Envelope Flap */}
+      {/* Left side flap - starts from bottom-left, points to center */}
+      <div
+        className="absolute left-0 bottom-0"
+        style={{
+          width: '55%',
+          height: '75%',
+          clipPath: 'polygon(0 0, 0 100%, 100% 100%, 100% 33%)',
+          background: 'linear-gradient(135deg, #F0F0F0 0%, #F6F6F6 50%, #FAFAFA 100%)',
+        }}
+      />
+
+      {/* Right side flap - starts from bottom-right, points to center */}
+      <div
+        className="absolute right-0 bottom-0"
+        style={{
+          width: '55%',
+          height: '75%',
+          clipPath: 'polygon(100% 0, 100% 100%, 0 100%, 0 33%)',
+          background: 'linear-gradient(-135deg, #F0F0F0 0%, #F6F6F6 50%, #FAFAFA 100%)',
+        }}
+      />
+
+      {/* Bottom flap - subtle triangle pointing up */}
+      <div
+        className="absolute bottom-0 left-0 right-0"
+        style={{
+          height: '28%',
+          clipPath: 'polygon(0 100%, 50% 20%, 100% 100%)',
+          background: '#F5F5F5',
+        }}
+      />
+
+      {/* V-flap (top) - rendered last to be on top */}
       <EnvelopeFlap
         state={state}
         onAnimationComplete={onFlapOpened}
-      />
-
-      {/* Bottom fold (triangle) */}
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0"
-        style={{
-          borderLeft: '150px solid transparent',
-          borderRight: '150px solid transparent',
-          borderBottom: '100px solid var(--color-envelope)',
-          filter: 'brightness(0.97)',
-        }}
       />
     </motion.div>
   );

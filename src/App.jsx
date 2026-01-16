@@ -16,33 +16,66 @@ function App() {
     replay,
   } = useAnimationState();
 
+  // Envelope animation variants - slides down as card rises
+  // Card is 85vh tall, envelope is ~4:3 aspect ratio (~50vh tall)
+  // Slide envelope down by ~40vh (300px) so bottom edge is visible below card
+  const envelopeVariants = {
+    closed: {
+      y: 0,
+      scale: 1,
+    },
+    open: {
+      y: 750, // Slide down more so envelope bottom is visible between card and DetailsSection
+      scale: 0.7,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
+  // Check if card should be visible
+  const showCard = state !== ANIMATION_STATES.CLOSED;
+
   return (
     <main className="min-h-screen bg-cream flex flex-col items-center p-4 md:p-8">
       {/* Spacer for centering when closed */}
       {isClosed && <div className="flex-1" />}
 
-      {/* Animation Container */}
+      {/* Animation Container - holds both envelope and card */}
       <div
-        className="relative w-full max-w-lg md:max-w-none perspective-1000 flex flex-col items-center"
+        className="relative w-full max-w-lg perspective-1000"
         style={{
-          minHeight: isClosed ? '50vh' : isOpen ? '95vh' : '50vh',
+          minHeight: isClosed ? '50vh' : '95vh',
+          overflow: 'visible',
         }}
       >
-        {/* Envelope - hidden when fully open on mobile */}
-        <div className={`w-full max-w-lg ${isOpen ? 'hidden md:block' : ''}`}>
+        {/* Envelope - always visible, behind card */}
+        <div
+          className="absolute top-0 left-0 right-0"
+          style={{ zIndex: 1 }}
+        >
           <Envelope
             state={state}
             onClick={openEnvelope}
             onFlapOpened={onFlapOpened}
+            envelopeVariants={envelopeVariants}
           />
         </div>
 
-        {/* Invite Card - rises from envelope */}
-        <InviteCard
-          state={state}
-          onCardRisen={onCardRisen}
-          onCardRotated={onCardRotated}
-        />
+        {/* Invite Card - rises from envelope, overlays it */}
+        {showCard && (
+          <div
+            className="absolute top-0 left-0 right-0 flex justify-center"
+            style={{ zIndex: 10 }}
+          >
+            <InviteCard
+              state={state}
+              onCardRisen={onCardRisen}
+              onCardRotated={onCardRotated}
+            />
+          </div>
+        )}
       </div>
 
       {/* Tap instruction - shown when envelope is closed */}

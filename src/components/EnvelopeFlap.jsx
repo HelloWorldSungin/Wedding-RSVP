@@ -3,7 +3,8 @@ import { ANIMATION_STATES } from '../hooks/useAnimationState';
 
 /**
  * Envelope flap with 3D rotation animation
- * Rotates open when envelope is clicked
+ * Prominent V-shaped flap that rotates open when envelope is clicked
+ * Shows beige inner lining when opened
  */
 function EnvelopeFlap({ state, onAnimationComplete }) {
   const shouldOpen = state !== ANIMATION_STATES.CLOSED;
@@ -18,17 +19,17 @@ function EnvelopeFlap({ state, onAnimationComplete }) {
       zIndex: 0,
       transition: {
         duration: 0.6,
-        ease: [0.4, 0, 0.2, 1], // ease-envelope
+        ease: [0.4, 0, 0.2, 1],
       },
     },
   };
 
   return (
     <motion.div
-      className="absolute top-0 left-0 right-0 h-1/2 origin-top"
+      className="absolute top-0 left-0 right-0 origin-top"
       style={{
+        height: '60%', // Prominent flap extending past middle
         transformStyle: 'preserve-3d',
-        perspective: '1000px',
       }}
       variants={flapVariants}
       initial="closed"
@@ -39,30 +40,65 @@ function EnvelopeFlap({ state, onAnimationComplete }) {
         }
       }}
     >
-      {/* Front of flap (visible when closed) */}
+      {/* Front of flap (visible when closed) - V-shaped with gradient */}
       <div
-        className="absolute inset-0 bg-envelope-flap rounded-t-lg"
+        className="absolute inset-0"
         style={{
           backfaceVisibility: 'hidden',
           clipPath: 'polygon(0 0, 50% 100%, 100% 0)',
+          background: 'linear-gradient(180deg, #F5F5F5 0%, #FAFAFA 40%, #F8F8F8 100%)',
         }}
       >
-        {/* Seal decoration */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full bg-gold/30" />
-        </div>
+        {/* Subtle shadow along the V-fold edges */}
+        <div
+          className="absolute inset-0"
+          style={{
+            clipPath: 'polygon(0 0, 50% 100%, 100% 0)',
+            background: `
+              linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.03) 50%, transparent 55%),
+              linear-gradient(-135deg, transparent 45%, rgba(0,0,0,0.03) 50%, transparent 55%)
+            `,
+          }}
+        />
+
+        {/* Edge highlight on left */}
+        <div
+          className="absolute top-0 left-0 h-full"
+          style={{
+            width: '2px',
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.8), transparent)',
+          }}
+        />
+
+        {/* Edge highlight on right */}
+        <div
+          className="absolute top-0 right-0 h-full"
+          style={{
+            width: '2px',
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.8), transparent)',
+          }}
+        />
       </div>
 
-      {/* Back of flap (visible when open) */}
+      {/* Back of flap (visible when open) - shows inner lining color */}
       <div
-        className="absolute inset-0 bg-envelope"
+        className="absolute inset-0"
         style={{
           backfaceVisibility: 'hidden',
           transform: 'rotateX(180deg)',
           clipPath: 'polygon(0 0, 50% 100%, 100% 0)',
-          filter: 'brightness(0.95)',
+          backgroundColor: 'var(--color-envelope-lining)',
         }}
-      />
+      >
+        {/* Inner lining texture */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, transparent 50%)',
+            clipPath: 'polygon(0 0, 50% 100%, 100% 0)',
+          }}
+        />
+      </div>
     </motion.div>
   );
 }

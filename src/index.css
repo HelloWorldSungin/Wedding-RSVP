@@ -11,9 +11,10 @@
   --color-charcoal: #36454F;
   --color-gold: #D4AF37;
   --color-gold-dark: #B8962E;
-  --color-envelope: #F8F4E8;
-  --color-envelope-flap: #EDE8D8;
+  --color-envelope: #F8F8F8;
+  --color-envelope-flap: #F5F5F5;
   --color-envelope-shadow: rgba(54, 69, 79, 0.15);
+  --color-envelope-lining: #E8E0D0;
 
   /* Typography */
   --font-script: "Great Vibes", cursive;

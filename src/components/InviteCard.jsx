@@ -8,6 +8,7 @@ import WeddingDetails from './WeddingDetails';
  * Main invitation card component
  * Rises from envelope and rotates into view
  * Responsive: vertical layout on mobile, horizontal on desktop
+ * Card stays above envelope (higher z-index) throughout animation
  */
 function InviteCard({ state, onCardRisen, onCardRotated }) {
   const [isMobile, setIsMobile] = useState(
@@ -32,20 +33,19 @@ function InviteCard({ state, onCardRisen, onCardRotated }) {
     ANIMATION_STATES.OPEN,
   ].includes(state);
 
-  const isOpen = state === ANIMATION_STATES.OPEN;
-
-  // Different animation values for mobile vs desktop
+  // Card animation variants
+  // Card starts inside envelope, rises up while envelope slides down
   const cardVariants = {
     hidden: {
-      y: '100%',
+      y: 80, // Start lower, inside envelope area
       opacity: 0,
-      rotate: -5,
-      scale: 0.9,
+      rotate: -3,
+      scale: 0.85,
     },
     rising: {
-      y: isMobile ? '-5%' : '-10%',
+      y: 20, // Rise up
       opacity: 1,
-      rotate: -5,
+      rotate: -3,
       scale: 0.95,
       transition: {
         duration: 0.8,
@@ -53,7 +53,7 @@ function InviteCard({ state, onCardRisen, onCardRotated }) {
       },
     },
     open: {
-      y: isMobile ? 0 : '-50%',
+      y: 0, // Final settled position
       opacity: 1,
       rotate: 0,
       scale: 1,
@@ -70,19 +70,14 @@ function InviteCard({ state, onCardRisen, onCardRotated }) {
     return 'open';
   };
 
-  // Mobile: relative positioning when open, Desktop: always absolute
-  const positionClasses = isMobile && isOpen
-    ? 'relative mx-auto'
-    : 'absolute top-1/2 left-1/2 -translate-x-1/2';
-
   // Mobile: constrained width, Desktop: height-based sizing
   const sizeClasses = isMobile
     ? 'w-[92vw] max-w-[420px]'
-    : 'h-[92vh] aspect-[1/2]';
+    : 'w-full max-w-lg h-[85vh]';
 
   return (
     <motion.div
-      className={`rounded-xl overflow-hidden ${positionClasses} ${sizeClasses}`}
+      className={`rounded-xl overflow-hidden ${sizeClasses}`}
       style={{
         boxShadow: 'var(--shadow-card)',
         backgroundColor: '#F0EDE8',
