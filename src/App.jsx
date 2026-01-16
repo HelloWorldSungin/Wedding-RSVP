@@ -16,21 +16,15 @@ function App() {
     replay,
   } = useAnimationState();
 
-  // Envelope animation variants - slides down as card rises
-  // Card is 85vh tall, envelope is ~4:3 aspect ratio (~50vh tall)
-  // Slide envelope down by ~40vh (300px) so bottom edge is visible below card
+  // Envelope stays in place - no slide animation
   const envelopeVariants = {
     closed: {
       y: 0,
       scale: 1,
     },
     open: {
-      y: 750, // Slide down more so envelope bottom is visible between card and DetailsSection
-      scale: 0.7,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      },
+      y: 0,
+      scale: 1,
     },
   };
 
