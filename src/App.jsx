@@ -40,17 +40,10 @@ function App() {
       {/* Spacer for centering when closed */}
       {isClosed && <div className="flex-1" />}
 
-      {/* Main content container - holds envelope overlay and card */}
-      <div
-        className="relative w-full max-w-lg"
-        style={{ minHeight: isClosed ? '40vh' : 'auto' }}
-      >
-        {/* Envelope overlay - hidden as soon as card starts rising */}
-        {!showCard && (
-          <div
-            className="absolute top-0 left-0 right-0 perspective-1000"
-            style={{ zIndex: 10 }}
-          >
+      {/* Envelope - shown when closed/opening */}
+      {!showCard && (
+        <div className="flex flex-col items-center">
+          <div className="w-64 md:w-80">
             <Envelope
               state={state}
               onClick={openEnvelope}
@@ -58,25 +51,24 @@ function App() {
               envelopeVariants={envelopeVariants}
             />
           </div>
-        )}
+          {/* Tap instruction - shown when envelope is closed */}
+          {isClosed && (
+            <p className="mt-3 text-charcoal/60 font-sans text-sm animate-pulse">
+              Tap to open
+            </p>
+          )}
+        </div>
+      )}
 
-        {/* Invite Card - always in normal document flow once visible */}
-        {showCard && (
-          <div className="w-full flex justify-center" style={{ zIndex: 10 }}>
-            <InviteCard
-              state={state}
-              onCardRisen={onCardRisen}
-              onCardRotated={onCardRotated}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Tap instruction - shown when envelope is closed */}
-      {isClosed && (
-        <p className="mt-8 text-charcoal/60 font-sans text-sm animate-pulse">
-          Tap to open
-        </p>
+      {/* Invite Card - appears after envelope opens */}
+      {showCard && (
+        <div className="w-full max-w-lg flex justify-center">
+          <InviteCard
+            state={state}
+            onCardRisen={onCardRisen}
+            onCardRotated={onCardRotated}
+          />
+        </div>
       )}
 
       {/* Spacer for centering when closed */}

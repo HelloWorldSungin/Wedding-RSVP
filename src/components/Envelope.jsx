@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ANIMATION_STATES } from '../hooks/useAnimationState';
 
-// Import envelope images
-import envelopeClosed from '../../picture/Envelope-Closed.png';
-import envelopeHalfway from '../../picture/Envelope-Half-way-opened.png';
-import envelopeOpened from '../../picture/Envelope-Opened.png';
+// Import envelope images (3-frame animation with S&D wax seal)
+import envelopeClosed from '../../picture/Envelope-State-1-Closed.png';
+import envelopeHalfway from '../../picture/Envelope-State-2-HalfOpen.png';
+import envelopeOpened from '../../picture/Envelope-State-3-FullyOpen.png';
 
 /**
  * Envelope component with frame-based opening animation
@@ -46,7 +46,7 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
 
   return (
     <motion.div
-      className="relative w-full aspect-[3/2] cursor-pointer"
+      className="relative w-full aspect-[1/2] cursor-pointer"
       onClick={isClosed ? onClick : undefined}
       whileHover={isClosed ? { scale: 1.02 } : {}}
       whileTap={isClosed ? { scale: 0.98 } : {}}
