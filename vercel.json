@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/tables", "destination": "/tables.html" },
+    { "source": "/tables/", "destination": "/tables.html" }
+  ],
+  "headers": [
+    {
+      "source": "/tables",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/tables/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    }
+  ]
+}
