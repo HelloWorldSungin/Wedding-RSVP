@@ -1,10 +1,12 @@
-# Final seating reconciliation - 2026-09-13
+# Final seating reconciliation - updated 2026-09-14
 
 ## Authority and scope
 
+September 14 amendment from Sungin: add **Nicole Lee to Table 2**. This explicit update supplements the September 13 PDF; all other assignments remain unchanged.
+
 The final seating authority is the locally retained final arrangement PDF, `Table Arrangment.pdf`, dated 9.19.26. It was visually checked page by page in the accompanying vault audit at `/Users/sunginkim/GIT/sungindiane012-vault/.omo/evidence/final-arrangement/audit.md`. This reconciliation records the public website and alphabetical-helper roster only. It contains no contact information.
 
-There are **104** guests at numbered tables. Diane Jung and Sungin Kim are at a separate sweetheart table and are intentionally absent from the public numbered list. Dduby is Hayne Kim's dog and is not a guest row.
+There are **105** guests at numbered tables. Diane Jung and Sungin Kim are at a separate sweetheart table and are intentionally absent from the public numbered list. Dduby is Hayne Kim's dog and is not a guest row.
 
 ## Delta from the historical 103-guest transcription
 
@@ -24,7 +26,7 @@ The PDF reference page omits the H and I name blocks, but the diagram pages plac
 | Table | Guests | Delta |
 | ---: | ---: | ---: |
 | 1 | 8 | 0 |
-| 2 | 7 | 0 |
+| 2 | 8 | +1 |
 | 3 | 9 | +1 |
 | 4 | 10 | 0 |
 | 5 | 8 | 0 |
@@ -35,7 +37,7 @@ The PDF reference page omits the H and I name blocks, but the diagram pages plac
 | 10 | 9 | 0 |
 | 11 | 8 | 0 |
 | 12 | 9 | 0 |
-| **Total** | **104** | **+1** |
+| **Total** | **105** | **+2** |
 
 ## Final guest rows
 
@@ -120,6 +122,7 @@ The PDF reference page omits the H and I name blocks, but the diagram pages plac
 | Minnie Yoo | 7 |
 | Nael Kim | 5 |
 | Nathan In | 9 |
+| Nicole Lee | 2 |
 | Paul Yang | 6 |
 | Raymond Yang | 11 |
 | Richard Jung | 3 |
