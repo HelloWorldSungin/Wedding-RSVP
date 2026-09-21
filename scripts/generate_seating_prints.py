@@ -81,7 +81,15 @@ def _clip_source_band(
     pdf.restoreState()
 
 
-def _draw_sign(source: ImageReader, path: Path, width: float, height: float) -> None:
+def _draw_sign(
+    source: ImageReader,
+    path: Path,
+    width: float,
+    height: float,
+    *,
+    qr_size: float = QR_SIZE,
+    qr_bottom: float | None = None,
+) -> None:
     pdf = canvas.Canvas(str(path), pagesize=(width, height), pageCompression=1)
     pdf.setTitle("Wedding seating QR sign - proof")
     pdf.setAuthor("Diane and Sungin")
@@ -93,13 +101,13 @@ def _draw_sign(source: ImageReader, path: Path, width: float, height: float) -> 
         URL,
         barLevel="H",
         barBorder=4,
-        barWidth=QR_SIZE,
-        barHeight=QR_SIZE,
+        barWidth=qr_size,
+        barHeight=qr_size,
     )
-    drawing = Drawing(QR_SIZE, QR_SIZE)
+    drawing = Drawing(qr_size, qr_size)
     drawing.add(qr)
-    qr_y = height * 0.39
-    renderPDF.draw(drawing, pdf, (width - QR_SIZE) / 2, qr_y)
+    qr_y = height * 0.39 if qr_bottom is None else qr_bottom
+    renderPDF.draw(drawing, pdf, (width - qr_size) / 2, qr_y)
 
     pdf.setFillColor(colors.black)
     pdf.setFont("Times-Roman", 16)
@@ -162,6 +170,8 @@ def _main() -> None:
         output_path / "seating-QR-sign-8x10in-PROOF.pdf",
         8 * 72,
         10 * 72,
+        qr_size=2 * QR_SIZE,
+        qr_bottom=145,
     )
     _draw_sign(
         source,
