@@ -21,7 +21,7 @@ The thank-you page opens on the venue's breeze-block screen wall. A window in th
 | Wall shadow | `--color-wall-shadow` | `#9C8F80` | Thank-you shadow seen through the block openings |
 | Thank-you muted ink | `--color-thanks-muted` | `#56636A` | Thank-you date line |
 
-The invitation's envelope tokens remain in `src/index.css`. The seating page uses paper, ink, muted ink, and hairline rules, with no status colors or decorative gold needed for a guest lookup. The thank-you page declares its own tokens in `src/thank-you/thank-you.css` and does not load `src/index.css`; its block is one inline SVG in concrete, with a `#B9AE9C` joint line at 55% opacity around each opening.
+The invitation's envelope tokens remain in `src/index.css`. The seating page uses paper, ink, muted ink, and hairline rules, with no status colors or decorative gold needed for a guest lookup. The thank-you page declares its own tokens in `src/thank-you/thank-you.css` and does not load `src/index.css`; its block is one SVG data URI in concrete, with a `#B9AE9C` joint line at 55% opacity around each opening.
 
 ## 3. Typography
 
