@@ -1,5 +1,15 @@
 import { motion } from 'framer-motion';
 
+// Rotated letter component (90 degrees clockwise)
+const RotatedLetter = ({ letter }) => (
+  <span
+    className="font-serif text-charcoal text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-wider block"
+    style={{ transform: 'rotate(90deg)' }}
+  >
+    {letter}
+  </span>
+);
+
 /**
  * Wedding details text section
  * Same vertical layout on both mobile and desktop (Paperless Post style)
@@ -28,16 +38,6 @@ function WeddingDetails() {
       },
     },
   };
-
-  // Rotated letter component (90 degrees clockwise)
-  const RotatedLetter = ({ letter }) => (
-    <span
-      className="font-serif text-charcoal text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-wider block"
-      style={{ transform: 'rotate(90deg)' }}
-    >
-      {letter}
-    </span>
-  );
 
   return (
     <motion.div
