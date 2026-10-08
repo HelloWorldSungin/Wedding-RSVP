@@ -21,19 +21,14 @@ the public repository.
 from __future__ import annotations
 
 import io
+import json
 import sys
 from pathlib import Path
 from typing import Final
 
 from PIL import Image, ImageCms, ImageOps
 
-# Order is the couple's selection order; widths never exceed the original.
-PHOTOS: Final = (
-    ("sneak-peak-1", (400, 720, 1080)),
-    ("sneak-peak-2", (400, 720, 1080)),
-    ("sneak-peak-3", (400, 720, 1080)),
-    ("winner-picture", (400, 675)),
-)
+MANIFEST: Final = Path(__file__).parents[1] / "src/thank-you/photoManifest.json"
 AVIF_QUALITY: Final = 50
 WEBP_QUALITY: Final = 72
 METADATA_KEYS: Final = ("exif", "xmp", "XML:com.adobe.xmp", "icc_profile")
@@ -69,14 +64,16 @@ def save(image: Image.Image, path: Path) -> None:
 
 
 def main(source_dir: Path, output_dir: Path) -> None:
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     output_dir.mkdir(parents=True, exist_ok=True)
-    for name, widths in PHOTOS:
+    for photo in manifest["photos"]:
+        name = photo["name"]
         with Image.open(source_dir / f"{name}.jpg") as original:
             image = to_srgb(original)
-        for width in widths:
+        for width in photo["widths"]:
             copy = resized(image, width)
-            for suffix in (".avif", ".webp"):
-                path = output_dir / f"{name}-{width}w{suffix}"
+            for image_format in manifest["formats"]:
+                path = output_dir / f"{name}-{width}w.{image_format}"
                 save(copy, path)
                 print(f"{path}  {path.stat().st_size // 1024} KB")
 

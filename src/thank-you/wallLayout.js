@@ -19,9 +19,10 @@ export function wallLayout(width, height) {
 // Phones and portrait screens: the window one block below the top, the plaque
 // one block below the window, and at least one row of wall under the plaque.
 function narrowLayout(width, height) {
-  const size = Math.floor(Math.min(width / 8, height / 16))
+  const plaque = width < 320 ? { ...PLAQUE, rows: 6 } : PLAQUE
+  const size = Math.floor(Math.min(width / 8, height / (12 + plaque.rows)))
   const x = Math.round((width - WINDOW.columns * size) / 2)
-  return withPixels(size, height, { x, y: size }, { x, y: 11 * size })
+  return withPixels(size, height, { x, y: size }, { x, y: 11 * size }, plaque)
 }
 
 // Landscape screens: the window and the plaque side by side, centred together
@@ -34,13 +35,13 @@ function wideLayout(width, height) {
 }
 
 // The wall face stops at the last whole row of blocks, so it never ends mid-block.
-function withPixels(size, height, windowOrigin, plaqueOrigin) {
+function withPixels(size, height, windowOrigin, plaqueOrigin, plaque = PLAQUE) {
   const box = (origin, { columns, rows }) => ({ ...origin, width: columns * size, height: rows * size })
   return {
     size,
     faceHeight: Math.floor(height / size) * size,
     window: box(windowOrigin, WINDOW),
-    plaque: box(plaqueOrigin, PLAQUE),
+    plaque: box(plaqueOrigin, plaque),
   }
 }
 

@@ -86,6 +86,7 @@ body {
 .thanks-continue {
   position: relative;
   z-index: 1;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   width: 44px;

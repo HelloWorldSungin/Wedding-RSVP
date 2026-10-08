@@ -7,7 +7,7 @@ import { wallLayout, windowBlocks } from './wallLayout.js'
 const MotionDiv = m.div
 
 // Keep in sync with the hero preload in thank-you.html so the preload is reused.
-const WALL_PHOTO_SIZES = '(min-width: 760px) 576px, 75vw'
+const WALL_PHOTO_SIZES = '(min-width: 760px) and (min-aspect-ratio: 23/20) min(576px, 43vw, 55vh), min(75vw, max(210px, 37.5vh))'
 
 const BLOCKS = windowBlocks()
 const LAST_BLOCK = BLOCKS.reduce((last, block) => (block.delay > last.delay ? block : last))

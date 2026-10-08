@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { OPEN_START_MS, WINDOW, wallLayout, windowBlocks } from './wallLayout.js'
 
 const VIEWPORTS = [
-  [320, 568], [360, 640], [375, 667], [390, 844], [430, 932], [700, 560],
+  [200, 560], [280, 560], [319, 560], [320, 568], [360, 640], [375, 667], [390, 844], [430, 932], [700, 560],
   [768, 1024], [1024, 768], [820, 600], [1280, 800], [1440, 900], [1920, 1080], [2560, 1440],
 ]
 
@@ -13,6 +13,11 @@ test('a phone gets a centred 2:3 window above the plaque', () => {
   assert.equal(faceHeight, 816)
   assert.deepEqual(window, { x: 51, y: 48, width: 288, height: 432 })
   assert.deepEqual(plaque, { x: 51, y: 528, width: 288, height: 192 })
+})
+
+test('a zoomed viewport gives the plaque room for its copy and control', () => {
+  const { plaque } = wallLayout(200, 560)
+  assert.deepEqual(plaque, { x: 25, y: 275, width: 150, height: 150 })
 })
 
 test('a landscape screen puts the plaque beside the window, centred together', () => {
