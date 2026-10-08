@@ -1,7 +1,9 @@
 {
   "rewrites": [
     { "source": "/tables", "destination": "/tables.html" },
-    { "source": "/tables/", "destination": "/tables.html" }
+    { "source": "/tables/", "destination": "/tables.html" },
+    { "source": "/thank-you", "destination": "/thank-you.html" },
+    { "source": "/thank-you/", "destination": "/thank-you.html" }
   ],
   "headers": [
     {
@@ -14,6 +16,18 @@
     },
     {
       "source": "/tables/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/thank-you",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/thank-you/",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/thank-you/:path*",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
     }
   ]

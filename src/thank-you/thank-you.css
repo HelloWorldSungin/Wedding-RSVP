@@ -1,0 +1,227 @@
+@import "tailwindcss" source(none);
+
+@theme {
+  --color-cream: #FAF9F6;
+  --color-charcoal: #36454F;
+  --color-thanks-muted: #56636A;
+  --color-concrete: #ECE7DE;
+  --color-wall-shadow: #9C8F80;
+
+  --font-script: "Great Vibes", cursive;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Lato", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* One breeze block from the venue's screen wall: a concrete square with a
+   centre square and four interlocking L-shaped openings. */
+:root {
+  --breeze-block: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23ECE7DE' fill-rule='evenodd' d='M0 0H100V100H0Z M37 37H63V63H37Z M8 8H45V27H27V45H8Z M55 8H92V45H73V27H55Z M8 55H27V73H45V92H8Z M73 55H92V92H55V73H73Z'/%3E%3Cpath fill='none' stroke='%23B9AE9C' stroke-opacity='.55' stroke-width='2' d='M37 37H63V63H37Z M8 8H45V27H27V45H8Z M55 8H92V45H73V27H55Z M8 55H27V73H45V92H8Z M73 55H92V92H55V73H73Z'/%3E%3C/svg%3E");
+}
+
+html {
+  background: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+}
+
+.thanks-page :focus-visible {
+  outline: 2px solid var(--color-charcoal);
+  outline-offset: 3px;
+}
+
+/* The wall fills the first screen; its face is whole rows of blocks over the
+   shadow behind them, aligned to the window grid. */
+.thanks-wall {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+}
+.thanks-wall-face {
+  position: absolute;
+  inset: 0 0 auto;
+  background:
+    var(--breeze-block) var(--wall-x) 0 / var(--block) var(--block),
+    var(--color-wall-shadow);
+}
+
+.thanks-plaque {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  background: var(--color-concrete);
+  text-align: center;
+  container-type: size;
+}
+.thanks-plaque::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgb(54 69 79 / 0.18);
+  pointer-events: none;
+}
+.thanks-plaque h1 {
+  margin: 0;
+  font: 400 min(16cqw, 64px)/1 var(--font-serif);
+  letter-spacing: -0.01em;
+}
+.thanks-plaque p {
+  margin: 0;
+  font: 300 max(14px, min(6.5cqw, 20px))/1.35 var(--font-sans);
+}
+
+.thanks-continue {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+}
+.thanks-continue:hover { background: rgb(54 69 79 / 0.08); }
+.thanks-continue svg { width: 18px; height: 18px; }
+
+.thanks-opening {
+  position: absolute;
+  inset: 0;
+}
+.thanks-opening--playing { cursor: pointer; }
+
+.thanks-window {
+  position: absolute;
+  overflow: hidden;
+  background: var(--color-wall-shadow);
+}
+.thanks-window-photo {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 60%;
+}
+.thanks-window-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 46% 58%;
+}
+.thanks-window-blocks {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+}
+.thanks-block {
+  background: var(--breeze-block) center / 100% 100% no-repeat;
+  backface-visibility: hidden;
+}
+
+/* The couple's note */
+.thanks-note {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 56px 24px 40px;
+  text-align: center;
+}
+.thanks-note:focus { outline: none; }
+.thanks-note-date {
+  margin: 0 0 28px;
+  color: var(--color-thanks-muted);
+  font: 400 0.9375rem/1.5 var(--font-sans);
+}
+.thanks-note-body {
+  margin: 0 0 28px;
+  font: 400 1.1875rem/1.65 var(--font-serif);
+  text-wrap: balance;
+}
+.thanks-note-signoff {
+  margin: 0 0 2px;
+  font: 400 1.125rem/1.4 var(--font-serif);
+}
+.thanks-note-names {
+  margin: 0;
+  font: 400 2.75rem/1.1 var(--font-script);
+}
+
+.thanks-band {
+  height: 40px;
+  margin: 8px 0 32px;
+  background: var(--breeze-block) center / 40px 40px, var(--color-wall-shadow);
+}
+
+/* Photos 2 to 4. Columns are sized so the 2:3 and 9:16 photos share a height. */
+.thanks-gallery {
+  display: grid;
+  grid-template-columns: 1.185fr 1fr;
+  gap: 12px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.thanks-gallery figure { margin: 0; }
+.thanks-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.thanks-photo-wide { grid-column: 1 / -1; aspect-ratio: 2 / 3; }
+.thanks-photo-portrait { aspect-ratio: 2 / 3; }
+.thanks-photo-guest { aspect-ratio: 9 / 16; }
+
+.thanks-foot {
+  padding: 40px 24px 56px;
+  text-align: center;
+}
+.thanks-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-charcoal);
+  font: 400 0.9375rem/1 var(--font-sans);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+}
+.thanks-replay:hover { background: rgb(54 69 79 / 0.06); }
+.thanks-replay svg { width: 16px; height: 16px; }
+
+@media (min-width: 760px) {
+  .thanks-note { padding-top: 88px; }
+  .thanks-note-body { font-size: 1.3125rem; }
+  .thanks-note-names { font-size: 3.25rem; }
+  .thanks-gallery {
+    grid-template-columns: 1fr 1fr 0.84375fr;
+    gap: 20px;
+    padding: 0 32px;
+  }
+  .thanks-photo-wide { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thanks-continue,
+  .thanks-replay { transition: none; }
+}
