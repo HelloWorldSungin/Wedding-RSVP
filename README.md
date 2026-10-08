@@ -1,8 +1,16 @@
-# Wedding E-Invite
+# Wedding Site
 
-An animated electronic wedding invitation landing page for Sungin & Diane's wedding. Inspired by Paperless Post's elegant envelope animation, this single-page web application delivers a delightful, interactive experience when guests receive the wedding invitation link.
+An animated electronic wedding invitation and thank-you site for Sungin & Diane. The original envelope invitation remains at `/`; the wedding thank-you card has its own page at `/thank-you`.
 
-## Features
+## Pages
+
+- `/` - original save-the-date invitation with the envelope animation and engagement photos.
+- `/thank-you` - a breeze-block wall opens onto the first wedding photo, followed by the couple's note and three more photos. The page supports reduced motion and replay. Its social preview uses typography rather than a photo.
+- `/tables` - guest table lookup.
+
+The thank-you and table pages request `noindex` through their HTML metadata and Vercel response headers. The four thank-you photos are committed as optimized AVIF and WebP copies; the original JPEGs are not part of this site.
+
+## Invitation Features
 
 - **Envelope Opening Animation** - Realistic envelope that opens on tap/click with smooth 3D flap rotation
 - **Card Reveal Animation** - Invitation card slides out and rotates 90 degrees into view
@@ -25,17 +33,17 @@ An animated electronic wedding invitation landing page for Sungin & Diane's wedd
 
 ## Tech Stack
 
-- **Framework**: React 18 + Vite 5
-- **Styling**: Tailwind CSS 3
-- **Animation**: Framer Motion 11
-- **Fonts**: Google Fonts (Great Vibes, Playfair Display, Lato)
+- **Framework**: React + Vite
+- **Styling**: Tailwind CSS
+- **Animation**: Framer Motion
+- **Fonts**: Great Vibes, Playfair Display, and Lato; the thank-you page self-hosts its font files
 - **Deployment**: Vercel
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
+- A Node.js version supported by the installed Vite release
 - npm or yarn
 
 ### Installation
@@ -68,37 +76,7 @@ VITE_DIRECTIONS_URL=https://maps.google.com/?q=Hart+and+Main+24217+Main+St+Santa
 
 ## Project Structure
 
-```
-wedding-e-invite/
-├── src/
-│   ├── components/
-│   │   ├── Envelope.jsx         # Envelope with open/close animation
-│   │   ├── EnvelopeFlap.jsx     # Top flap with 3D rotation
-│   │   ├── InviteCard.jsx       # Main card container
-│   │   ├── PhotoStack.jsx       # 3 photos vertical layout
-│   │   ├── WeddingDetails.jsx   # Names, date, venue text
-│   │   ├── ActionButtons.jsx    # 4 link buttons
-│   │   └── ReplayButton.jsx     # Reset animation button
-│   ├── assets/
-│   │   └── photos/              # Engagement photos
-│   ├── hooks/
-│   │   └── useAnimationState.js # Animation state machine
-│   ├── App.jsx                  # Main app component
-│   ├── main.jsx                 # React entry point
-│   └── index.css                # Tailwind + fonts
-├── public/
-│   ├── favicon.ico
-│   └── og-image.jpg             # Social sharing preview image
-├── .claude/
-│   ├── PRD.md                   # Product requirements
-│   ├── commands/                # Claude Code slash commands
-│   └── reference/               # Best practices docs
-├── index.html
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-└── .env.example
-```
+See [`vite.config.js`](vite.config.js) for the page entry points, and [`DESIGN.md`](DESIGN.md) for visual decisions.
 
 ## Available Scripts
 
@@ -162,21 +140,7 @@ npm run build
 
 ### Vercel Configuration
 
-The project includes a `vercel.json` for security headers:
-
-```json
-{
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" }
-      ]
-    }
-  ]
-}
-```
+See [`vercel.json`](vercel.json) for the route rewrites and `X-Robots-Tag` headers. The thank-you and table pages are available at extensionless paths.
 
 ## Design Reference
 
@@ -186,7 +150,7 @@ The project includes a `vercel.json` for security headers:
 
 ## License
 
-This project is private and created for personal use for Sungin & Diane's wedding.
+This is a personal project for Sungin & Diane's wedding. The repository is public.
 
 ---
 

@@ -15,7 +15,8 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
   const isClosed = state === ANIMATION_STATES.CLOSED;
   const [currentFrame, setCurrentFrame] = useState(0); // 0: closed, 1: halfway, 2: opened
 
-  // Handle frame animation when state changes to OPENING
+  // Handle frame animation when state changes to OPENING. The envelope only
+  // mounts while CLOSED or OPENING, so a replay always starts from frame 0.
   useEffect(() => {
     if (state === ANIMATION_STATES.OPENING) {
       // Frame 1: halfway (after 100ms)
@@ -30,8 +31,6 @@ function Envelope({ state, onClick, onFlapOpened, envelopeVariants }) {
         clearTimeout(timer2);
         clearTimeout(timer3);
       };
-    } else if (state === ANIMATION_STATES.CLOSED) {
-      setCurrentFrame(0);
     }
   }, [state, onFlapOpened]);
 

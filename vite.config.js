@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         invitation: resolve(import.meta.dirname, 'index.html'),
         tables: resolve(import.meta.dirname, 'tables.html'),
+        thankYou: resolve(import.meta.dirname, 'thank-you.html'),
       },
     },
   },

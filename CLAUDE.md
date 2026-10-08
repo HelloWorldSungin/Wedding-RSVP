@@ -1,48 +1,10 @@
-# Wedding E-Invite
+# Wedding Site
 
-Animated electronic wedding invitation with envelope opening animation for Sungin & Diane's wedding on September 19, 2026 at Hart & Main, Santa Clarita CA.
+Wedding site for Sungin & Diane. See `README.md` for current pages and `DESIGN.md` for visual decisions.
 
 ## Tech Stack
 
-- **Frontend**: React 18, Vite 5, Tailwind CSS 3, Framer Motion 11
-- **Fonts**: Google Fonts (Great Vibes, Playfair Display, Lato)
-- **Deployment**: Vercel (static site)
-- **Backend**: N/A (static frontend only)
-- **Database**: N/A (no data persistence)
-
-## Project Structure
-
-```
-wedding-invite/
-├── src/
-│   ├── components/
-│   │   ├── Envelope.jsx         # Envelope with open/close animation
-│   │   ├── EnvelopeFlap.jsx     # Top flap with 3D rotation
-│   │   ├── InviteCard.jsx       # Main card container
-│   │   ├── PhotoStack.jsx       # 3 photos vertical layout
-│   │   ├── WeddingDetails.jsx   # Names, date, venue text
-│   │   ├── ActionButtons.jsx    # 4 link buttons (RSVP, Website, Registry, Directions)
-│   │   └── ReplayButton.jsx     # Reset animation button
-│   ├── assets/
-│   │   └── photos/              # Engagement photos
-│   ├── hooks/
-│   │   └── useAnimationState.js # Animation state machine
-│   ├── App.jsx                  # Main app component
-│   ├── main.jsx                 # React entry point
-│   └── index.css                # Tailwind + fonts
-├── public/
-│   ├── favicon.ico
-│   └── og-image.jpg             # Social sharing preview
-├── index.html
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
-├── .env                         # Link URLs (RSVP, registry, etc.)
-└── .claude/
-    ├── PRD.md                   # Product requirements
-    └── reference/               # Implementation guides
-```
+See `package.json` for dependencies and `vite.config.js` for page entry points. Deployment uses Vercel.
 
 ## Commands
 
